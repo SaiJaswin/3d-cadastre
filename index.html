@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Land & Property Portal (3D-ULPIN)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Three.js + OrbitControls for 3D visualizer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="20,4 36,13 36,27 20,36 4,27 4,13" fill="url(#hexGrad)" opacity="0.95"/>
+          <polygon points="20,10 30,16 30,26 20,32 10,26 10,16" fill="none" stroke="white" stroke-width="1.5" opacity="0.8"/>
+          <circle cx="20" cy="21" r="3.5" fill="#38bdf8"/>
+          <defs>
+            <linearGradient id="hexGrad" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#4f46e5"/>
+              <stop offset="0.5" stop-color="#06b6d4"/>
+              <stop offset="1" stop-color="#10b981"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-title">Land Portal</span>
+        <span class="logo-sub">Digital Property Record</span>
+      </div>
+    </div>
+
+    <!-- Active Role Quick Selector in Sidebar -->
+    <div class="sidebar-role-selector">
+      <label class="role-selector-label">LOGGED IN AS:</label>
+      <div class="role-select-box">
+        <select id="sidebarRoleSelect" class="role-dropdown" onchange="changeUserRole(this.value)">
+          <option value="citizen" selected>👤 Citizen / Owner (Person X)</option>
+          <option value="advocate">⚖️ Advocate / Legal Counsel</option>
+          <option value="employee">🏛️ Govt. Employee / Tahsildar</option>
+          <option value="surveyor">📐 Surveyor / Engineer</option>
+          <option value="bank">🏦 Bank / Loan Officer</option>
+        </select>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">MAIN SERVICES</div>
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Home Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-page="map3d">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <span>3D Property Map</span>
+        <span class="nav-pill">Interactive</span>
+      </a>
+      <a href="#" class="nav-item" data-page="generator">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <span>Create Property ID</span>
+      </a>
+      <a href="#" class="nav-item" data-page="ledger">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Check Ownership & Loans</span>
+      </a>
+
+      <div class="nav-section-label" style="margin-top:16px;">CITIZEN SERVICES</div>
+      <a href="#" class="nav-item" data-page="ownership">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Property Owners List</span>
+      </a>
+      <a href="#" class="nav-item" data-page="mutations">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        <span>Ownership Transfer Status</span>
+      </a>
+      <a href="#" class="nav-item" data-page="cartography">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <span>Old Map Digitizer</span>
+      </a>
+
+      <div class="nav-section-label" style="margin-top:16px;">SECURITY & AUDIT</div>
+      <a href="#" class="nav-item" data-page="gateway">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Security & Logins</span>
+      </a>
+      <a href="#" class="nav-item" data-page="audit">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
+        <span>Activity History</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="bim-compliance-badge">
+        <div class="pulse-indicator"></div>
+        <div>
+          <div class="comp-title">Official Land Registry</div>
+          <div class="comp-sub">Verified & Safe to Use</div>
+        </div>
+      </div>
+      <div class="user-card" style="margin-top: 10px;">
+        <div class="user-avatar" id="footerAvatar">PX</div>
+        <div class="user-info">
+          <span class="user-name" id="footerUserName">Person X</span>
+          <span class="user-role" id="footerUserRole">Registered Citizen</span>
+        </div>
+        <div class="status-dot"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main-content" id="mainContent">
+
+    <!-- TOP BAR WITH ROLE SELECTOR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle" title="Toggle Sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="breadcrumb-container">
+          <span class="breadcrumb-root">Portal</span>
+          <span class="breadcrumb-separator">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+          <span class="breadcrumb" id="breadcrumb">Home Dashboard</span>
+        </div>
+      </div>
+
+      <!-- Center Role Switcher Badge -->
+      <div class="topbar-center">
+        <div class="role-switcher-pill">
+          <span class="rsp-icon">🎭</span>
+          <span class="rsp-label">Switch View:</span>
+          <select id="topbarRoleSelect" class="topbar-role-dropdown" onchange="changeUserRole(this.value)">
+            <option value="citizen" selected>👤 Citizen / Owner (Person X)</option>
+            <option value="advocate">⚖️ Advocate / Legal Counsel</option>
+            <option value="employee">🏛️ Govt. Employee / Tahsildar</option>
+            <option value="surveyor">📐 Surveyor / Engineer</option>
+            <option value="bank">🏦 Bank / Loan Officer</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Quick Property Search -->
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearch" placeholder="Search Property ID (e.g. IN-AP-040B)..." onkeypress="handleQuickUlpinSearch(event)" />
+        </div>
+        <button class="btn btn-sm btn-primary" onclick="lookupQuickUlpin()">
+          Search
+        </button>
+      </div>
+    </header>
+
+    <!-- ROLE WELCOME BANNER (Dynamically updates per role) -->
+    <div class="role-banner" id="roleBanner">
+      <div class="role-banner-content">
+        <div class="rb-icon" id="rbIcon">👤</div>
+        <div>
+          <h3 class="rb-title" id="rbTitle">Welcome, Person X (Citizen Mode)</h3>
+          <p class="rb-desc" id="rbDesc">You can check your property ownership, view 3D house boundaries, see bank loan status, and apply to transfer property names.</p>
+        </div>
+      </div>
+      <div class="rb-badge" id="rbBadge">Citizen Access</div>
+    </div>
+
+    <!-- ══════════ PAGE 1: DASHBOARD (SIMPLE & CLEAR) ══════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Digital Land & 3D Property Portal</h1>
+          <p class="page-subtitle">Simple, transparent property records for every citizen. View ownership, check house prices, and verify land boundaries.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="switchPage('generator')">
+            + New Property ID
+          </button>
+          <button class="btn btn-primary" onclick="switchPage('map3d')">
+            Open 3D Map
+          </button>
+        </div>
+      </div>
+
+      <!-- SIMPLE 4-STEP HOW IT WORKS GUIDE -->
+      <div class="simple-guide-grid">
+        <div class="guide-card">
+          <div class="guide-num">1</div>
+          <div class="guide-title">Map Scanner</div>
+          <div class="guide-desc">Converts old paper maps into clean digital 3D parcels.</div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-num">2</div>
+          <div class="guide-title">Safe Login</div>
+          <div class="guide-desc">Protects property records from fake registrations.</div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-num">3</div>
+          <div class="guide-title">Digital Property ID</div>
+          <div class="guide-desc">Gives every floor & flat a unique 3D-ULPIN ID.</div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-num">4</div>
+          <div class="guide-title">Ownership Ledger</div>
+          <div class="guide-desc">Shows who owns the house and if any bank loan exists.</div>
+        </div>
+      </div>
+
+      <!-- STATS ROW IN SIMPLE WORDS -->
+      <div class="stats-grid" style="margin-top: 18px;">
+        <div class="stat-card" style="--accent:#6366f1">
+          <div class="stat-icon" style="background:rgba(99,102,241,0.15)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Registered Properties</span>
+            <span class="stat-value font-mono">1,24,857</span>
+            <span class="stat-change up">All digitally verified</span>
+          </div>
+        </div>
+        <div class="stat-card" style="--accent:#06b6d4">
+          <div class="stat-icon" style="background:rgba(6,182,212,0.15)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Verified Owners</span>
+            <span class="stat-value font-mono">98,432</span>
+            <span class="stat-change up">Clear legal titles</span>
+          </div>
+        </div>
+        <div class="stat-card" style="--accent:#10b981">
+          <div class="stat-icon" style="background:rgba(16,185,129,0.15)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Solid Foundations</span>
+            <span class="stat-value font-mono">100%</span>
+            <span class="stat-change up">Firmly grounded</span>
+          </div>
+        </div>
+        <div class="stat-card" style="--accent:#f59e0b">
+          <div class="stat-icon" style="background:rgba(245,158,11,0.15)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Pending Transfers</span>
+            <span class="stat-value font-mono">3,291</span>
+            <span class="stat-change down">Under government review</span>
+          </div>
+        </div>
+        <div class="stat-card" style="--accent:#ec4899">
+          <div class="stat-icon" style="background:rgba(236,72,153,0.15)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/></svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Security Shield</span>
+            <span class="stat-value font-mono">Active</span>
+            <span class="stat-change up">Safe & Encrypted</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN 3D MAP & SUMMARY -->
+      <div class="dashboard-grid" style="margin-top: 18px;">
+        <div class="card card-large map-preview-card">
+          <div class="card-header">
+            <div class="card-header-left">
+              <span class="card-title">Interactive 3D Neighbourhood View</span>
+              <span class="badge badge-green" style="margin-left:10px">Click any house to view details</span>
+            </div>
+            <div class="card-actions">
+              <div class="view-toggle-pills" id="dashViewToggle">
+                <button class="view-pill active" onclick="setDashboardViewMode('storey')">Floor by Floor</button>
+                <button class="view-pill" onclick="setDashboardViewMode('solid')">Whole Building</button>
+              </div>
+              <button class="btn-sm btn-primary" onclick="switchPage('map3d')">Full Screen 3D</button>
+            </div>
+          </div>
+
+          <div class="map-3d-container" id="dashMap3dContainer">
+            <div id="dashThreeCanvasContainer" class="three-viewport"></div>
+
+            <!-- Price Legend Explained in Simple Words -->
+            <div class="map-legend">
+              <div class="legend-header">
+                <span class="legend-title">Price Guide</span>
+                <span class="legend-sub">Cost per sq. meter</span>
+              </div>
+              <div class="legend-items">
+                <div class="legend-item"><span class="legend-color" style="background:#047857"></span>₹11,314 (Affordable)</div>
+                <div class="legend-item"><span class="legend-color" style="background:#10b981"></span>₹11,455</div>
+                <div class="legend-item"><span class="legend-color" style="background:#fde047"></span>₹13,743 (Average)</div>
+                <div class="legend-item"><span class="legend-color" style="background:#ea580c"></span>₹13,856</div>
+                <div class="legend-item"><span class="legend-color" style="background:#ef4444"></span>₹14,830 (Premium)</div>
+              </div>
+            </div>
+
+            <!-- Grounding Notice -->
+            <div class="grounding-badge">
+              <span class="gb-icon">⚓</span>
+              <span>All buildings sit firmly on real ground foundations (Zero floating).</span>
+            </div>
+
+            <div class="map-controls">
+              <button class="map-btn" title="Rotate Model" onclick="rotateDashCamera()">⟳</button>
+              <button class="map-btn" title="Zoom In" onclick="zoomDashCamera(-5)">+</button>
+              <button class="map-btn" title="Zoom Out" onclick="zoomDashCamera(5)">−</button>
+              <button class="map-btn" title="Reset View" onclick="resetDashCamera()">⊕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SELECTED PROPERTY SUMMARY (Person X, Person Y, Person Z) -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Selected House Record</span>
+            <span class="badge badge-green font-mono" id="dashUlpinBadge">ID: IN-AP-040B-FL02</span>
+          </div>
+          <div class="ulpin-hero-dossier" id="dashUlpinDossier">
+            <div class="dossier-grid">
+              <div class="dossier-item">
+                <label>Unique Property ID (3D-ULPIN)</label>
+                <strong class="mono text-cyan" id="dashUlpinVal">IN-AP-040B-FL02</strong>
+              </div>
+              <div class="dossier-item">
+                <label>House Name / Unit</label>
+                <span id="dashSurveyVal">House Block Z-4 (Floor 2, Flat 201)</span>
+              </div>
+              <div class="dossier-item">
+                <label>Current Legal Owner</label>
+                <strong class="text-green font-bold" id="dashOwnerVal">Person X (100% Ownership)</strong>
+              </div>
+              <div class="dossier-item">
+                <label>Previous Owner / Seller</label>
+                <span id="dashPrevOwnerVal">Person Y (Sold in 2019)</span>
+              </div>
+              <div class="dossier-item">
+                <label>Original Allotment</label>
+                <span id="dashOrigOwnerVal">Person Z (Original 1987 Owner)</span>
+              </div>
+              <div class="dossier-item">
+                <label>Bank Loan Status</label>
+                <span class="badge badge-yellow" id="dashMortgageVal">Active Home Loan (₹35,00,000)</span>
+              </div>
+              <div class="dossier-item">
+                <label>Municipal Tax Status</label>
+                <span class="text-green">● Paid & Up to date</span>
+              </div>
+              <div class="dossier-item">
+                <label>Foundation Base</label>
+                <span class="text-green">● Solid Ground (+47.3m)</span>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:14px;" onclick="openFullLegalDossier()">
+              <span>View Full Ownership Paperwork & History</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- RECENT OWNERSHIP TRANSFERS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent Property Transfers (Easy History)</span>
+            <button class="btn-sm btn-outline" onclick="switchPage('mutations')">View All</button>
+          </div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon bg-indigo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg></div>
+              <div class="activity-body">
+                <p class="activity-text"><strong>Sale Transfer Complete</strong>: <strong>Person Y</strong> transferred house title to <strong>Person X</strong></p>
+                <span class="activity-time">Property ID: <code>IN-AP-040B-FL02</code> · Verified by Officer</span>
+              </div>
+              <span class="badge badge-green">Approved</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon bg-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg></div>
+              <div class="activity-body">
+                <p class="activity-text"><strong>Boundary Verified</strong>: No overlap with neighbours</p>
+                <span class="activity-time">Floor boundaries checked in 3D</span>
+              </div>
+              <span class="badge badge-blue">Verified</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon bg-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/></svg></div>
+              <div class="activity-body">
+                <p class="activity-text"><strong>Bank Loan Registered</strong>: State Bank home loan linked</p>
+                <span class="activity-time">Owner: <strong>Person X</strong></span>
+              </div>
+              <span class="badge badge-yellow">Loan Active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PAGE 2: 3D PROPERTY MAP ══════════ -->
+    <div class="page" id="page-map3d">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">3D Interactive Property Map</h1>
+          <p class="page-subtitle">Click any building or floor to see who owns it, how much it costs, and its foundation stability.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="resetFullCamera()">Reset Camera</button>
+        </div>
+      </div>
+
+      <div class="map3d-full-container">
+        <!-- 3D Sidebar Controls -->
+        <div class="map3d-sidebar">
+
+          <div class="filter-group">
+            <label>How would you like to view?</label>
+            <div class="view-mode-buttons">
+              <button class="btn-mode active" id="btnModeStorey" onclick="setFullViewMode('storey')">
+                <span class="mode-icon">🏢</span>
+                <div>
+                  <div class="mode-title">Floor by Floor</div>
+                  <div class="mode-desc">See each flat separately</div>
+                </div>
+              </button>
+              <button class="btn-mode" id="btnModeSolid" onclick="setFullViewMode('solid')">
+                <span class="mode-icon">🧱</span>
+                <div>
+                  <div class="mode-title">Whole Building</div>
+                  <div class="mode-desc">See the full building block</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stability Box -->
+          <div class="filter-group highlight-box">
+            <div class="stability-header">
+              <span class="sh-icon">⚓</span>
+              <span class="sh-title">Foundation & Ground Check</span>
+            </div>
+            <div class="stability-metrics">
+              <div class="sm-row"><span>Ground Status:</span><strong class="text-green">Built on Real Soil (Grounded)</strong></div>
+              <div class="sm-row"><span>Floating Buildings:</span><strong>Zero (None)</strong></div>
+              <div class="sm-row"><span>Foundation Anchor:</span><span>Solid Concrete Base</span></div>
+            </div>
+          </div>
+
+          <!-- Slicer -->
+          <div class="filter-group">
+            <div class="slider-header">
+              <label>Floor Slicer (Choose Floor)</label>
+              <span id="levelDisplay" class="mono text-cyan">All Floors (Ground to Roof)</span>
+            </div>
+            <input type="range" min="1" max="12" value="12" class="slider" id="floorSlider" oninput="sliceBuildingFloors(this.value)" />
+            <div class="range-labels">
+              <span>Ground Floor</span>
+              <span>Middle Floors</span>
+              <span>Top Roof</span>
+            </div>
+          </div>
+
+          <!-- Inspector -->
+          <div class="parcel-info-box" id="inspectorBox">
+            <div class="info-title">Selected Property Details</div>
+            <div class="info-row"><span>Property ID:</span><strong class="mono text-cyan" id="inspUlpin">IN-AP-040B-FL02</strong></div>
+            <div class="info-row"><span>Building:</span><strong id="inspName">Block Z-4</strong></div>
+            <div class="info-row"><span>Owner Name:</span><strong class="text-green" id="inspOwner">Person X</strong></div>
+            <div class="info-row"><span>Seller / Prev:</span><span id="inspPrevOwner">Person Y</span></div>
+            <div class="info-row"><span>Original Allotment:</span><span id="inspOrigOwner">Person Z</span></div>
+            <div class="info-row"><span>Est. Price:</span><strong class="text-green" id="inspPrice">₹13,856 / m²</strong></div>
+            <button class="btn btn-primary" style="width:100%;margin-top:10px;font-size:12px;" onclick="switchPage('ledger')">
+              <span>Check Full Paperwork & Deeds</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- 3D WebGL Main Viewport -->
+        <div class="map3d-main">
+          <div id="fullThreeCanvasContainer" class="three-viewport"></div>
+
+          <div class="viewport-hud-top">
+            <div class="hud-chip">
+              <span class="dot live"></span>
+              <span id="activeModelLabel">Neighbourhood Property Map</span>
+            </div>
+            <div class="hud-chip">
+              <span>Ground: <strong>Solid Foundation (+47.3m)</strong></span>
+            </div>
+          </div>
+
+          <div class="map-overlay-legend" id="fullLegendBox">
+            <div class="legend-title" id="legendTitle">Price Guide (Cost per m²)</div>
+            <div class="legend-grid-horizontal" id="legendGrid">
+              <div class="l-chip"><span style="background:#047857"></span>₹11,314 (Low)</div>
+              <div class="l-chip"><span style="background:#10b981"></span>₹11,455</div>
+              <div class="l-chip"><span style="background:#fde047"></span>₹13,743 (Mid)</div>
+              <div class="l-chip"><span style="background:#ea580c"></span>₹13,856</div>
+              <div class="l-chip"><span style="background:#ef4444"></span>₹14,830 (High)</div>
+            </div>
+          </div>
+
+          <div class="viewport-controls-bottom">
+            <button class="hud-btn" onclick="setCameraViewpoint('iso')">3D Angle</button>
+            <button class="hud-btn" onclick="setCameraViewpoint('top')">Top View</button>
+            <button class="hud-btn" onclick="setCameraViewpoint('front')">Street View</button>
+            <button class="hud-btn" onclick="toggleAutoRotate()" id="btnAutoRotate">⟳ Rotate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PAGE 3: CREATE PROPERTY ID ══════════ -->
+    <div class="page" id="page-generator">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Generate a New Digital Property ID</h1>
+          <p class="page-subtitle">Creates an official, tamper-proof ID for your land, building, or specific apartment floor.</p>
+        </div>
+      </div>
+
+      <div class="generator-grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Enter Property Details</span>
+          </div>
+
+          <form id="ulpinGenForm" onsubmit="generateNewUlpin(event)">
+            <div class="gen-form-grid">
+              <div class="form-group">
+                <label>State & City</label>
+                <input type="text" class="input-field" id="genState" value="Andhra Pradesh, Vijayawada" />
+              </div>
+              <div class="form-group">
+                <label>Locality / Village</label>
+                <input type="text" class="input-field" id="genMandal" value="Kondapalli Sector" />
+              </div>
+              <div class="form-group">
+                <label>Survey / Plot Number</label>
+                <input type="text" class="input-field" id="genSurvey" value="Plot 40B / House 112" />
+              </div>
+              <div class="form-group">
+                <label>Floor / Unit</label>
+                <select class="select-full" id="genFloor">
+                  <option value="FL00">Ground Floor (Base)</option>
+                  <option value="FL01">Floor 1 (Flat 101)</option>
+                  <option value="FL02" selected>Floor 2 (Flat 201)</option>
+                  <option value="FL03">Floor 3 (Flat 301)</option>
+                  <option value="FL04">Floor 4 (Penthouse)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Current Owner</label>
+                <input type="text" class="input-field" id="genOwnerName" value="Person X" />
+              </div>
+              <div class="form-group">
+                <label>Previous Owner</label>
+                <input type="text" class="input-field" id="genPrevOwnerName" value="Person Y" />
+              </div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 18px;">
+              <button type="submit" class="btn btn-primary" style="width:100%;">
+                Generate Official Property ID Now
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card" id="genOutputCard">
+          <div class="card-header">
+            <span class="card-title">Your Generated Property ID</span>
+            <span class="badge badge-green" id="genStatusBadge">Generated Successfully</span>
+          </div>
+
+          <div class="gen-output-box">
+            <div class="output-row-hero">
+              <label>Official Digital ID (3D-ULPIN)</label>
+              <div class="ulpin-hero-text font-mono" id="mintedUlpin">IN-AP-040B-FL02</div>
+            </div>
+
+            <div class="output-details-grid">
+              <div class="od-item"><label>Registered Owner</label><strong id="mintedOwner">Person X</strong></div>
+              <div class="od-item"><label>Boundary Check</label><span class="badge badge-green">Passed (No overlaps)</span></div>
+              <div class="od-item"><label>Foundation Base</label><span class="text-green">Solid Concrete Footing</span></div>
+              <div class="od-item"><label>Legal Status</label><span class="text-green font-bold">Clear Freehold Title</span></div>
+            </div>
+
+            <div class="gen-next-actions" style="margin-top: 16px; display: flex; gap: 8px;">
+              <button class="btn btn-outline" style="flex:1" onclick="switchPage('ledger')">View Legal Summary</button>
+              <button class="btn btn-primary" style="flex:1" onclick="switchPage('map3d')">Locate on 3D Map</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PAGE 4: CHECK OWNERSHIP & LOANS ══════════ -->
+    <div class="page" id="page-ledger">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Check Ownership & Loan Records</h1>
+          <p class="page-subtitle">Verify who truly owns any property, see previous ownership history, and check if any bank loans exist.</p>
+        </div>
+      </div>
+
+      <div class="ledger-layout">
+        <div class="ledger-search-bar">
+          <input type="text" id="ledgerQueryInput" placeholder="Enter Property ID (e.g. IN-AP-040B-FL02)..." class="search-lg" />
+          <button class="btn btn-primary" onclick="executeLedgerQuery()">Lookup Records</button>
+        </div>
+
+        <div class="ledger-grid">
+          <div class="card ledger-main-card">
+            <div class="card-header">
+              <span class="card-title" id="ledgerDossierTitle">Property Record: IN-AP-040B-FL02</span>
+              <div class="card-actions">
+                <span class="badge badge-green">Clear Legal Title</span>
+              </div>
+            </div>
+
+            <div class="record-tabs">
+              <button class="tab-btn active" onclick="switchTab(this, 'tab-baunit')">Property & Owner</button>
+              <button class="tab-btn" onclick="switchTab(this, 'tab-rrr')">Bank Loans & Taxes</button>
+              <button class="tab-btn" onclick="switchTab(this, 'tab-docs')">Official Documents</button>
+            </div>
+
+            <div class="tab-content active" id="tab-baunit">
+              <div class="record-section">
+                <div class="record-grid">
+                  <div class="record-field"><label>Property ID</label><span class="mono text-cyan font-bold" id="lUlpin">IN-AP-040B-FL02</span></div>
+                  <div class="record-field"><label>Current Owner</label><strong class="text-green font-bold" id="lOwner">Person X (100% Title)</strong></div>
+                  <div class="record-field"><label>Building / Flat</label><span id="lName">Block Z-4, Floor 2, Flat 201</span></div>
+                  <div class="record-field"><label>Location</label><span>Vijayawada, NTR District</span></div>
+                  <div class="record-field"><label>Estimated Market Value</label><span class="text-green font-bold">₹24,94,080</span></div>
+                  <div class="record-field"><label>Foundation Grounding</label><span class="text-green">Built on Solid Ground (+47.3m)</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" id="tab-rrr">
+              <div class="rrr-list">
+                <div class="rrr-item">
+                  <div class="rrr-type ownership">Ownership</div>
+                  <div class="rrr-details">
+                    <div class="rrr-party">Person X (100% Full Owner)</div>
+                    <div class="rrr-meta">Registered Sale Deed 2019 · Valid & Complete</div>
+                  </div>
+                  <span class="badge badge-green">Verified</span>
+                </div>
+                <div class="rrr-item">
+                  <div class="rrr-type restriction">Bank Loan</div>
+                  <div class="rrr-details">
+                    <div class="rrr-party">Home Loan — ₹35,00,000</div>
+                    <div class="rrr-meta">State Bank · Repayment in progress until 2034</div>
+                  </div>
+                  <span class="badge badge-yellow">Loan Active</span>
+                </div>
+                <div class="rrr-item">
+                  <div class="rrr-type responsibility">Property Tax</div>
+                  <div class="rrr-details">
+                    <div class="rrr-party">Municipal Tax — ₹18,400/yr</div>
+                    <div class="rrr-meta">Fully paid for current financial year</div>
+                  </div>
+                  <span class="badge badge-green">Tax Paid</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content" id="tab-docs">
+              <div class="docs-list">
+                <div class="doc-item">
+                  <div class="doc-icon">📜</div>
+                  <div class="doc-info">
+                    <span class="doc-name">Registered Sale Deed (2019)</span>
+                    <span class="doc-meta">Transferred from Person Y to Person X</span>
+                  </div>
+                  <button class="btn-sm btn-outline">View Summary</button>
+                </div>
+                <div class="doc-item">
+                  <div class="doc-icon">📐</div>
+                  <div class="doc-info">
+                    <span class="doc-name">Digital 3D Map Plan</span>
+                    <span class="doc-meta">Boundary dimensions and height coordinates</span>
+                  </div>
+                  <button class="btn-sm btn-outline" onclick="switchPage('map3d')">Open in 3D</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chain of Ownership Card (Person X, Person Y, Person Z) with clean flow cards -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Ownership History (Who owned it before?)</span></div>
+            <div class="ownership-chain">
+              <div class="owner-node current">
+                <div class="owner-avatar">PX</div>
+                <div class="owner-info">
+                  <span class="owner-name">Person X</span>
+                  <span class="owner-since">2019 – Present (Current Owner)</span>
+                  <span class="owner-share">Purchased with registered sale deed</span>
+                </div>
+              </div>
+              <div class="chain-connector">
+                <div class="connector-line"></div>
+                <span class="connector-badge">Bought From (Sale Deed 2019)</span>
+              </div>
+              <div class="owner-node">
+                <div class="owner-avatar">PY</div>
+                <div class="owner-info">
+                  <span class="owner-name">Person Y</span>
+                  <span class="owner-since">2011 – 2019 (Previous Owner)</span>
+                  <span class="owner-share">Held clear title for 8 years</span>
+                </div>
+              </div>
+              <div class="chain-connector">
+                <div class="connector-line"></div>
+                <span class="connector-badge">Inherited From (Allotment 2011)</span>
+              </div>
+              <div class="owner-node">
+                <div class="owner-avatar">PZ</div>
+                <div class="owner-info">
+                  <span class="owner-name">Person Z</span>
+                  <span class="owner-since">1987 – 2011 (Original Owner)</span>
+                  <span class="owner-share">Original property allotment</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PAGE 5: CITIZEN OWNERS LIST ══════════ -->
+    <div class="page" id="page-ownership">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Registered Property Owners</h1>
+          <p class="page-subtitle">Directory of registered citizens and their property holdings.</p>
+        </div>
+      </div>
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr><th>Citizen ID</th><th>Owner Name</th><th>Property ID</th><th>Property Size</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">CIT-001</td>
+              <td><div class="owner-cell"><div class="mini-avatar">PX</div>Person X</div></td>
+              <td class="mono text-cyan">IN-AP-040B-FL02</td><td>180 m²</td>
+              <td><span class="badge badge-green">Verified Owner</span></td>
+              <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View Records</button></td>
+            </tr>
+            <tr>
+              <td class="mono">CIT-002</td>
+              <td><div class="owner-cell"><div class="mini-avatar">PY</div>Person Y</div></td>
+              <td class="mono text-cyan">IN-AP-040B-FL01</td><td>220 m²</td>
+              <td><span class="badge badge-green">Verified Owner</span></td>
+              <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View Records</button></td>
+            </tr>
+            <tr>
+              <td class="mono">CIT-003</td>
+              <td><div class="owner-cell"><div class="mini-avatar">PZ</div>Person Z</div></td>
+              <td class="mono text-cyan">IN-AP-040B-FL04</td><td>350 m²</td>
+              <td><span class="badge badge-green">Verified Owner</span></td>
+              <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View Records</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ PAGE 6: OWNERSHIP TRANSFERS ══════════ -->
+    <div class="page" id="page-mutations">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Property Ownership Transfer Applications</h1>
+          <p class="page-subtitle">Track the transfer of property names from seller to buyer.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary">Apply to Transfer Name</button>
+        </div>
+      </div>
+      <div class="mutations-grid">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Recent Transfer Applications</span></div>
+          <table class="data-table">
+            <thead><tr><th>Application ID</th><th>Property ID</th><th>Seller</th><th>Buyer</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="mono">TRF-2847</td><td class="mono text-cyan">IN-AP-040B-FL02</td>
+                <td>Person Y</td><td>Person X</td><td><span class="badge badge-green">Completed & Approved</span></td>
+              </tr>
+              <tr>
+                <td class="mono">TRF-3102</td><td class="mono text-cyan">IN-AP-055A-FL01</td>
+                <td>Person Z</td><td>Person Y</td><td><span class="badge badge-yellow">Officer Verification</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card mutation-timeline-card">
+          <div class="card-header"><span class="card-title">How Transfer Works</span></div>
+          <div class="timeline">
+            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">1. Buyer & Seller submit deed</span><span class="tl-date">Complete</span></div></div>
+            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">2. 3D Map & Boundary Checked</span><span class="tl-date">Zero overlaps found</span></div></div>
+            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">3. Revenue Officer approves</span><span class="tl-date">Signed</span></div></div>
+            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">4. New Property ID issued</span><span class="tl-date">Person X is official owner</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PAGE 7: OLD MAP DIGITIZER ══════════ -->
+    <div class="page" id="page-cartography">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Old Paper Map Digitizer</h1>
+          <p class="page-subtitle">Upload old paper maps or blueprints to automatically create digital 3D parcels.</p>
+        </div>
+      </div>
+      <div class="carto-grid">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Upload Paper Map</span></div>
+          <div class="upload-zone">
+            <p><strong>Drag and drop your village or building map</strong></p>
+            <span>Supports PDF, Scanned Image, JPG, PNG</span>
+            <button class="btn btn-primary" style="margin-top:12px">Choose File from Computer</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Recent Digitized Maps</span></div>
+          <div class="queue-list">
+            <div class="queue-item">
+              <div class="queue-thumb">🗺️</div>
+              <div class="queue-info">
+                <span class="queue-name">Neighbourhood Map 1987.pdf</span>
+                <span class="queue-status">Converted 48 houses into 3D parcels ✓</span>
+              </div>
+              <span class="queue-badge done">Complete</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PAGE 8: SECURITY ══════════ -->
+    <div class="page" id="page-gateway">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Security & Citizen Protection</h1>
+          <p class="page-subtitle">Keeps your property records safe from unauthorized changes.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="security-grid">
+          <div class="sec-metric"><span class="sec-value text-green">100%</span><span class="sec-label">Protected</span></div>
+          <div class="sec-metric"><span class="sec-value text-cyan">2-Factor</span><span class="sec-label">OTP Verification</span></div>
+          <div class="sec-metric"><span class="sec-value text-green">0</span><span class="sec-label">Fake Records</span></div>
+          <div class="sec-metric"><span class="sec-value text-yellow">24/7</span><span class="sec-label">System Active</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PAGE 9: AUDIT LOG ══════════ -->
+    <div class="page" id="page-audit">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Activity History</h1>
+          <p class="page-subtitle">Record of all property updates.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="audit-log">
+          <div class="audit-row">
+            <span class="audit-time">Today</span>
+            <span class="audit-action approve">VERIFIED</span>
+            <span class="audit-desc">Property <code>IN-AP-040B-FL02</code> ownership confirmed for <strong>Person X</strong></span>
+          </div>
+          <div class="audit-row">
+            <span class="audit-time">Yesterday</span>
+            <span class="audit-action approve">GROUNDED</span>
+            <span class="audit-desc">All foundations confirmed stable on ground level (+47.3m)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
