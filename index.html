@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Digital Land & Property Portal (3D-ULPIN)</title>
+  <title>Digital Land & Property Portal (3D-ULPIN & Cadastre)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -32,20 +32,23 @@
       </div>
       <div class="logo-text">
         <span class="logo-title">Land Portal</span>
-        <span class="logo-sub">Digital Property Record</span>
+        <span class="logo-sub">3D-ULPIN & Cadastre</span>
       </div>
     </div>
 
-    <!-- Active Role Quick Selector in Sidebar -->
+    <!-- Active Role Quick Selector in Sidebar with ID Badge -->
     <div class="sidebar-role-selector">
-      <label class="role-selector-label">LOGGED IN AS:</label>
+      <div class="srs-header">
+        <span class="role-selector-label">LOGGED IN ROLE</span>
+        <button class="btn-badge-cred" onclick="openCredentialsModal()" title="View ID & Credentials">🪪 View ID</button>
+      </div>
       <div class="role-select-box">
         <select id="sidebarRoleSelect" class="role-dropdown" onchange="changeUserRole(this.value)">
           <option value="citizen" selected>👤 Citizen (Person X)</option>
-          <option value="advocate">⚖️ Advocate (Legal Counsel)</option>
+          <option value="advocate">⚖️ Advocate (Verma Legal)</option>
           <option value="employee">🏛️ Govt. Employee (Tahsildar)</option>
-          <option value="surveyor">📐 Surveyor (Cadastral Engineer)</option>
-          <option value="bank">🏦 Bank (Loan Officer)</option>
+          <option value="surveyor">📐 Surveyor (Cadastral GIS)</option>
+          <option value="bank">🏦 Bank (Loan Officer Priya)</option>
         </select>
       </div>
     </div>
@@ -59,25 +62,25 @@
       <a href="#" class="nav-item" data-page="map3d">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         <span>3D Property Map</span>
-        <span class="nav-pill">Interactive</span>
+        <span class="nav-pill">Flats & Towers</span>
       </a>
       <a href="#" class="nav-item" data-page="generator">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        <span>Create Property ID</span>
+        <span>Create Flat 3D-ULPIN</span>
       </a>
       <a href="#" class="nav-item" data-page="ledger">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         <span>Check Ownership & Loans</span>
       </a>
 
-      <div class="nav-section-label" style="margin-top:16px;">CITIZEN SERVICES</div>
+      <div class="nav-section-label" style="margin-top:16px;">CITIZEN & OWNERS</div>
       <a href="#" class="nav-item" data-page="ownership">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span>Property Owners List</span>
+        <span>Flats Directory (A to Z)</span>
       </a>
       <a href="#" class="nav-item" data-page="mutations">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-        <span>Ownership Transfer Status</span>
+        <span>Ownership Transfers</span>
       </a>
       <a href="#" class="nav-item" data-page="cartography">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -87,7 +90,7 @@
       <div class="nav-section-label" style="margin-top:16px;">SECURITY & AUDIT</div>
       <a href="#" class="nav-item" data-page="gateway">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Security & Logins</span>
+        <span>Security & Credentials</span>
       </a>
       <a href="#" class="nav-item" data-page="audit">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
@@ -95,9 +98,13 @@
       </a>
     </nav>
 
+    <!-- User Profile Footer with Avatar Image -->
     <div class="sidebar-footer">
-      <div class="user-card">
-        <div class="user-avatar" id="footerAvatar">PX</div>
+      <div class="user-card" onclick="openCredentialsModal()" style="cursor: pointer;" title="Click to view full credentials">
+        <div class="user-avatar-img" id="footerAvatarImg">
+          <!-- Dynamic Profile Image -->
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" id="footerImgElem" />
+        </div>
         <div class="user-info">
           <span class="user-name" id="footerUserName">Person X</span>
           <span class="user-role" id="footerUserRole">Registered Citizen</span>
@@ -110,7 +117,7 @@
   <!-- ── MAIN CONTENT ── -->
   <main class="main-content" id="mainContent">
 
-    <!-- TOP BAR WITH ROLE SELECTOR -->
+    <!-- TOP BAR -->
     <header class="topbar">
       <div class="topbar-left">
         <button class="menu-toggle" id="menuToggle" title="Toggle Sidebar">
@@ -125,18 +132,21 @@
         </div>
       </div>
 
-      <!-- Center Role Switcher Badge -->
+      <!-- Center Role Switcher Badge with Photo -->
       <div class="topbar-center">
         <div class="role-switcher-pill">
-          <span class="rsp-icon">🎭</span>
-          <span class="rsp-label">Switch View:</span>
+          <div class="topbar-avatar-mini" id="topbarAvatarMini">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80" alt="Avatar" id="topbarImgElem" />
+          </div>
+          <span class="rsp-label">Role:</span>
           <select id="topbarRoleSelect" class="topbar-role-dropdown" onchange="changeUserRole(this.value)">
             <option value="citizen" selected>👤 Citizen (Person X)</option>
-            <option value="advocate">⚖️ Advocate (Legal Counsel)</option>
+            <option value="advocate">⚖️ Advocate (Verma Legal)</option>
             <option value="employee">🏛️ Govt. Employee (Tahsildar)</option>
-            <option value="surveyor">📐 Surveyor (Cadastral Engineer)</option>
-            <option value="bank">🏦 Bank (Loan Officer)</option>
+            <option value="surveyor">📐 Surveyor (Cadastral GIS)</option>
+            <option value="bank">🏦 Bank (Loan Officer Priya)</option>
           </select>
+          <button class="btn-icon-cred" onclick="openCredentialsModal()" title="View ID Credentials">🪪 ID</button>
         </div>
       </div>
 
@@ -149,7 +159,7 @@
         <!-- Quick Property Search -->
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" id="globalSearch" placeholder="Search Property ID (e.g. IN-AP-040B-FL02)..." onkeypress="handleQuickUlpinSearch(event)" />
+          <input type="text" id="globalSearch" placeholder="Search Flat ULPIN (e.g. IN-AP-040B-FL02-U201)..." onkeypress="handleQuickUlpinSearch(event)" />
         </div>
         <button class="btn btn-sm btn-primary" onclick="lookupQuickUlpin()">
           Search & Fly To
@@ -157,16 +167,23 @@
       </div>
     </header>
 
-    <!-- ROLE WELCOME BANNER (Dynamically updates per role) -->
+    <!-- ROLE WELCOME BANNER WITH OFFICIAL BADGE -->
     <div class="role-banner" id="roleBanner">
       <div class="role-banner-content">
-        <div class="rb-icon" id="rbIcon">👤</div>
+        <div class="rb-avatar-box">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" alt="Role Avatar" id="bannerImgElem" />
+        </div>
         <div>
           <h3 class="rb-title" id="rbTitle">Welcome, Person X (Citizen Mode)</h3>
-          <p class="rb-desc" id="rbDesc">You can check your property ownership, view 3D house boundaries, see your bank loan status, and apply to transfer property names.</p>
+          <p class="rb-desc" id="rbDesc">You can check your flat ownership, view 3D boundaries, inspect your specific bank loan, and apply for name transfers.</p>
+          <div class="rb-meta-badges">
+            <span class="cred-pill" id="rbCredPill">ID: CIT-98472-PX</span>
+            <span class="cred-pill" id="rbAuthPill">Passkey 2FA Verified ✓</span>
+          </div>
         </div>
       </div>
       <div class="role-action-wrapper" id="roleActionContainer">
+        <button class="btn btn-sm btn-outline" onclick="openCredentialsModal()">🪪 View ID Card</button>
         <button class="btn btn-sm btn-primary" id="btnRolePrimaryAction" onclick="executeRoleAction()">Apply For Transfer</button>
       </div>
     </div>
@@ -175,53 +192,38 @@
     <div class="page active" id="page-dashboard">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Digital Land & 3D Property Portal</h1>
-          <p class="page-subtitle">Simple, transparent property records. Click individual floor slabs to see unique 3D-ULPIN IDs, owner names, and personalized loan records.</p>
+          <h1 class="page-title">Digital Land & 3D Flat Cadastre</h1>
+          <p class="page-subtitle">Interactive 3D neighbourhood with diverse architectural structures (L-shaped villas, cylindrical towers, stepped terraces, and twin skybridge towers) subdivided into individual flats.</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-outline" onclick="switchPage('generator')">
-            + New Property ID
+            + New Flat 3D-ULPIN
           </button>
           <button class="btn btn-primary" onclick="switchPage('map3d')">
-            Open 3D Map
+            Open 3D Explorer
           </button>
         </div>
       </div>
 
-      <!-- SIMPLE 4-STEP HOW IT WORKS GUIDE -->
-      <div class="simple-guide-grid">
-        <div class="guide-card">
-          <div class="guide-num">1</div>
-          <div class="guide-title">Map Scanner</div>
-          <div class="guide-desc">Converts old paper maps into clean digital 3D parcels.</div>
-        </div>
-        <div class="guide-card">
-          <div class="guide-num">2</div>
-          <div class="guide-title">Safe Login</div>
-          <div class="guide-desc">Protects property records from fake registrations.</div>
-        </div>
-        <div class="guide-card">
-          <div class="guide-num">3</div>
-          <div class="guide-title">Floor 3D-ULPIN</div>
-          <div class="guide-desc">Unique 3D-ULPIN ID created specifically for each floor.</div>
-        </div>
-        <div class="guide-card">
-          <div class="guide-num">4</div>
-          <div class="guide-title">Ownership & Loans</div>
-          <div class="guide-desc">Shows individual owner and customized bank loan records.</div>
-        </div>
+      <!-- ARCHITECTURAL HIGHLIGHTS ROW -->
+      <div class="arch-types-banner">
+        <div class="at-item" onclick="flyToArchitectureType('l-shaped')"><span class="at-icon">🏡</span><strong>L-Shaped Villas</strong><small>Courtyard Duplexes</small></div>
+        <div class="at-item" onclick="flyToArchitectureType('cylindrical')"><span class="at-icon">🏙️</span><strong>Cylinder Tower</strong><small>Glass Helix Facade</small></div>
+        <div class="at-item" onclick="flyToArchitectureType('stepped')"><span class="at-icon">🏢</span><strong>Stepped Cascades</strong><small>Terrace Penthouses</small></div>
+        <div class="at-item" onclick="flyToArchitectureType('twin')"><span class="at-icon">🌉</span><strong>Twin Towers</strong><small>Skybridge at Fl-7</small></div>
+        <div class="at-item" onclick="flyToArchitectureType('heritage')"><span class="at-icon">🏛️</span><strong>Gable Heritage</strong><small>Sloped Roof Blocks</small></div>
       </div>
 
       <!-- STATS ROW -->
-      <div class="stats-grid" style="margin-top: 18px;">
+      <div class="stats-grid" style="margin-top: 16px;">
         <div class="stat-card" style="--accent:#6366f1">
           <div class="stat-icon" style="background:rgba(99,102,241,0.15)">
             <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
           </div>
           <div class="stat-body">
-            <span class="stat-label">Registered Properties</span>
-            <span class="stat-value font-mono">1,24,857</span>
-            <span class="stat-change up">All digitally verified</span>
+            <span class="stat-label">Architectural Blocks</span>
+            <span class="stat-value font-mono">18 Complexes</span>
+            <span class="stat-change up">Villas, Towers & Bridges</span>
           </div>
         </div>
         <div class="stat-card" style="--accent:#06b6d4">
@@ -229,9 +231,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
           </div>
           <div class="stat-body">
-            <span class="stat-label">Verified Owners</span>
-            <span class="stat-value font-mono">98,432</span>
-            <span class="stat-change up">Person A to Person Z</span>
+            <span class="stat-label">Subdivided Flat Units</span>
+            <span class="stat-value font-mono">1,480 Flats</span>
+            <span class="stat-change up">Subdivided with 3D-ULPIN</span>
           </div>
         </div>
         <div class="stat-card" style="--accent:#10b981">
@@ -239,9 +241,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg>
           </div>
           <div class="stat-body">
-            <span class="stat-label">Floor Units Mapped</span>
-            <span class="stat-value font-mono">3,48,190</span>
-            <span class="stat-change up">Floor-by-floor 3D-ULPIN</span>
+            <span class="stat-label">Citizen Roster</span>
+            <span class="stat-value font-mono">Person A to Z</span>
+            <span class="stat-change up">All verified titles</span>
           </div>
         </div>
         <div class="stat-card" style="--accent:#f59e0b">
@@ -250,8 +252,8 @@
           </div>
           <div class="stat-body">
             <span class="stat-label">Pending Transfers</span>
-            <span class="stat-value font-mono">3,291</span>
-            <span class="stat-change down">Under government review</span>
+            <span class="stat-value font-mono">12 Applications</span>
+            <span class="stat-change down">Under Tahsildar review</span>
           </div>
         </div>
         <div class="stat-card" style="--accent:#ec4899">
@@ -259,9 +261,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/></svg>
           </div>
           <div class="stat-body">
-            <span class="stat-label">Active Bank Mortgages</span>
-            <span class="stat-value font-mono">41,208</span>
-            <span class="stat-change up">Unique per property</span>
+            <span class="stat-label">Bank Mortgages</span>
+            <span class="stat-value font-mono">Individual</span>
+            <span class="stat-change up">Unique per flat unit</span>
           </div>
         </div>
       </div>
@@ -271,149 +273,162 @@
         <div class="card card-large map-preview-card">
           <div class="card-header">
             <div class="card-header-left">
-              <span class="card-title">Interactive 3D Neighbourhood View</span>
-              <span class="badge badge-green" style="margin-left:10px">Click any floor slab to inspect</span>
+              <span class="card-title">Interactive 3D Cadastre (Architectural Diversity & Subdivided Flats)</span>
             </div>
             <div class="card-actions">
               <!-- Interactive Type Filter Pills -->
               <div class="type-filter-pills" id="dashTypeFilter">
-                <button class="filter-pill active" onclick="filterByPropertyType('all')">All Houses</button>
-                <button class="filter-pill" onclick="filterByPropertyType('residential')">Residential</button>
+                <button class="filter-pill active" onclick="filterByPropertyType('all')">All Buildings</button>
+                <button class="filter-pill" onclick="filterByPropertyType('residential')">Villas & Houses</button>
                 <button class="filter-pill" onclick="filterByPropertyType('commercial')">Commercial</button>
-                <button class="filter-pill" onclick="filterByPropertyType('mixed')">Towers</button>
+                <button class="filter-pill" onclick="filterByPropertyType('towers')">Towers & Bridges</button>
               </div>
 
               <div class="view-toggle-pills" id="dashViewToggle">
-                <button class="view-pill active" onclick="setDashboardViewMode('storey')">Floor by Floor</button>
-                <button class="view-pill" onclick="setDashboardViewMode('solid')">Whole Building</button>
+                <button class="view-pill active" onclick="setDashboardViewMode('flats')">Subdivided Flats</button>
+                <button class="view-pill" onclick="setDashboardViewMode('storey')">Floor Slices</button>
+                <button class="view-pill" onclick="setDashboardViewMode('solid')">Whole Mass</button>
               </div>
-              <button class="btn-sm btn-primary" onclick="switchPage('map3d')">Full Screen 3D</button>
+              <button class="btn-sm btn-primary" onclick="switchPage('map3d')">Full Screen</button>
             </div>
           </div>
 
           <div class="map-3d-container" id="dashMap3dContainer">
             <div id="dashThreeCanvasContainer" class="three-viewport"></div>
 
-            <!-- Floating 3D Hover Tooltip -->
+            <!-- Floating 3D Hover Tooltip (Subdivided Flat & Loan) -->
             <div class="three-hover-tooltip" id="dashHoverTooltip">
-              <div class="tht-id font-mono" id="thtId">IN-AP-040B-FL02</div>
-              <div class="tht-owner" id="thtOwner">Owner: Person X</div>
-              <div class="tht-floor text-cyan" id="thtFloor">Floor 2 (Flat 201)</div>
-              <div class="tht-loan text-yellow" id="thtLoan">Bank Loan: ₹28,50,000</div>
+              <div class="tht-flat-header">
+                <span class="tht-flat-badge" id="thtFlatName">Flat 201 (East Wing)</span>
+                <span class="tht-bhk" id="thtBhk">3 BHK • 160 m²</span>
+              </div>
+              <div class="tht-id font-mono" id="thtId">IN-AP-040B-FL02-U201</div>
+              <div class="tht-owner" id="thtOwner">Owner: Person X (100%)</div>
+              <div class="tht-loan" id="thtLoan">Bank Loan: State Bank ₹28,50,000</div>
+              <div class="tht-arch text-cyan" id="thtArch">Structure: L-Shaped Duplex Block</div>
             </div>
 
             <!-- Property Type Legend -->
             <div class="map-legend">
               <div class="legend-header">
-                <span class="legend-title">Property Classification</span>
+                <span class="legend-title">Architectural Typology</span>
               </div>
               <div class="legend-items">
-                <div class="legend-item"><span class="legend-color" style="background:#10b981"></span>Residential Houses</div>
-                <div class="legend-item"><span class="legend-color" style="background:#06b6d4"></span>High-Rise Apartments</div>
-                <div class="legend-item"><span class="legend-color" style="background:#6366f1"></span>Commercial / Retail</div>
-                <div class="legend-item"><span class="legend-color" style="background:#f59e0b"></span>Mixed-Use Towers</div>
+                <div class="legend-item"><span class="legend-color" style="background:#10b981"></span>L-Shaped Villas (Residential)</div>
+                <div class="legend-item"><span class="legend-color" style="background:#06b6d4"></span>Cylinder & Stepped Towers</div>
+                <div class="legend-item"><span class="legend-color" style="background:#38bdf8"></span>Twin Towers (Skybridge)</div>
+                <div class="legend-item"><span class="legend-color" style="background:#6366f1"></span>Commercial Pods (Pilotis)</div>
+                <div class="legend-item"><span class="legend-color" style="background:#f59e0b"></span>Gable Heritage Blocks</div>
               </div>
             </div>
 
             <div class="map-controls">
-              <button class="map-btn" title="Explode / Separate Floors" onclick="toggleExplodeFloors()" id="btnExplodeFloors">☲</button>
+              <button class="map-btn" title="Explode / Separate Flats" onclick="toggleExplodeFloors()" id="btnExplodeFloors">☲</button>
               <button class="map-btn" title="Rotate Model" onclick="rotateDashCamera()">⟳</button>
-              <button class="map-btn" title="Zoom In" onclick="zoomDashCamera(-5)">+</button>
-              <button class="map-btn" title="Zoom Out" onclick="zoomDashCamera(5)">−</button>
+              <button class="map-btn" title="Zoom In" onclick="zoomDashCamera(-6)">+</button>
+              <button class="map-btn" title="Zoom Out" onclick="zoomDashCamera(6)">−</button>
               <button class="map-btn" title="Reset View" onclick="resetDashCamera()">⊕</button>
             </div>
           </div>
         </div>
 
-        <!-- SELECTED PROPERTY SUMMARY (Dynamic Per Floor & Per Person) -->
+        <!-- SELECTED FLAT DOSSIER (Subdivided Flat & Owner Profile) -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Selected Unit Details</span>
-            <span class="badge badge-green font-mono" id="dashUlpinBadge">ID: IN-AP-040B-FL02</span>
+            <span class="card-title">Selected Flat / Unit Details</span>
+            <span class="badge badge-green font-mono" id="dashUlpinBadge">ID: IN-AP-040B-FL02-U201</span>
           </div>
-          <div class="ulpin-hero-dossier" id="dashUlpinDossier">
+
+          <!-- Floor Flat Sub-Division Selector -->
+          <div class="flat-subdivision-pills" id="flatSubdivContainer">
+            <span class="fsp-label">Units on this floor:</span>
+            <div class="fsp-group" id="floorFlatsList">
+              <button class="fsp-btn active" onclick="selectFlatUnit('U201')">Flat 201 (East)</button>
+              <button class="fsp-btn" onclick="selectFlatUnit('U202')">Flat 202 (West)</button>
+              <button class="fsp-btn" onclick="selectFlatUnit('U203')">Flat 203 (South)</button>
+            </div>
+          </div>
+
+          <div class="ulpin-hero-dossier" id="dashUlpinDossier" style="margin-top:12px;">
             <div class="dossier-grid">
               <div class="dossier-item">
-                <label>Floor-Specific 3D-ULPIN</label>
-                <strong class="mono text-cyan" id="dashUlpinVal">IN-AP-040B-FL02</strong>
+                <label>Exact Flat 3D-ULPIN</label>
+                <strong class="mono text-cyan" id="dashUlpinVal">IN-AP-040B-FL02-U201</strong>
               </div>
               <div class="dossier-item">
-                <label>Floor Level & Unit</label>
-                <strong class="text-primary font-bold" id="dashFloorLevelVal">Floor 2 (Flat 201)</strong>
+                <label>Unit / Flat Position</label>
+                <strong class="text-primary font-bold" id="dashFloorLevelVal">Flat 201 (East Wing, 3BHK)</strong>
               </div>
               <div class="dossier-item">
-                <label>Current Legal Owner</label>
+                <label>Registered Legal Owner</label>
                 <strong class="text-green font-bold" id="dashOwnerVal">Person X (100% Ownership)</strong>
+              </div>
+              <div class="dossier-item">
+                <label>Architecture Style</label>
+                <span id="dashArchStyle">Gable Courtyard Villa Block</span>
               </div>
               <div class="dossier-item">
                 <label>Previous Owner / Seller</label>
                 <span id="dashPrevOwnerVal">Person Y (Sold in 2019)</span>
               </div>
               <div class="dossier-item">
-                <label>Original Allotment</label>
-                <span id="dashOrigOwnerVal">Person Z (Original 1987 Owner)</span>
-              </div>
-              <div class="dossier-item">
                 <label>Personalized Bank Loan</label>
                 <span class="badge badge-yellow" id="dashMortgageVal">State Bank Loan: ₹28,50,000</span>
               </div>
               <div class="dossier-item">
-                <label>Municipal Tax Status</label>
-                <span class="text-green">● Paid & Up to date</span>
+                <label>Flat Carpet Area</label>
+                <span class="text-primary font-mono" id="dashCarpetArea">160 m² (1,722 sq.ft)</span>
               </div>
               <div class="dossier-item">
-                <label>Property Classification</label>
-                <span class="badge badge-green" id="dashTypeBadge">Residential Freehold</span>
+                <label>Property Tax Status</label>
+                <span class="text-green">● Paid Up to Date (2026-27)</span>
               </div>
             </div>
 
-            <!-- Role Restricted Action Buttons -->
+            <!-- Action Buttons -->
             <div class="dossier-action-bar" style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">
               <button class="btn btn-primary" style="width:100%;" onclick="openFullLegalDossier()">
-                <span>View Full Ownership Paperwork & History</span>
+                <span>View Full Ownership Paperwork & Chain of Deeds</span>
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </button>
 
-              <!-- Role Context Buttons -->
-              <div class="role-context-actions" id="dashRoleActionArea">
-                <button class="btn btn-outline btn-sm" style="width:100%;" onclick="executeRoleSpecificAction('advocate')">
-                  ⚖️ Generate Legal Due Diligence Report
-                </button>
-              </div>
+              <button class="btn btn-outline btn-sm" style="width:100%;" onclick="openCredentialsModal()">
+                🪪 Inspect Active Profile ID & Verified Credentials
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- RECENT OWNERSHIP TRANSFERS -->
+        <!-- RECENT FLAT OWNERSHIP TRANSFERS -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Recent Property Transfers (Easy History)</span>
+            <span class="card-title">Recent Subdivided Flat Transfers</span>
             <button class="btn-sm btn-outline" onclick="switchPage('mutations')">View All</button>
           </div>
           <div class="activity-list">
             <div class="activity-item">
               <div class="activity-icon bg-indigo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg></div>
               <div class="activity-body">
-                <p class="activity-text"><strong>Sale Transfer Complete</strong>: <strong>Person Y</strong> transferred Floor 2 title to <strong>Person X</strong></p>
-                <span class="activity-time">Property ID: <code>IN-AP-040B-FL02</code> · Verified by Officer</span>
+                <p class="activity-text"><strong>Flat 201 Deed Approved</strong>: <strong>Person Y</strong> transferred Flat 201 to <strong>Person X</strong></p>
+                <span class="activity-time">ULPIN: <code>IN-AP-040B-FL02-U201</code> · Verified by Tahsildar K. Rao</span>
               </div>
               <span class="badge badge-green">Approved</span>
             </div>
             <div class="activity-item">
               <div class="activity-icon bg-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg></div>
               <div class="activity-body">
-                <p class="activity-text"><strong>Inheritance Transfer</strong>: <strong>Person D</strong> registered Floor 1 from <strong>Person Z</strong></p>
-                <span class="activity-time">Property ID: <code>IN-AP-040B-FL01-D</code> · NOC Clear</span>
+                <p class="activity-text"><strong>Skybridge Tower 2 (Flat 702)</strong>: <strong>Person S</strong> registered title from <strong>Person Z</strong></p>
+                <span class="activity-time">ULPIN: <code>IN-AP-040B-TW2-FL07-U702</code> · Twin Towers Bridge</span>
               </div>
               <span class="badge badge-blue">Verified</span>
             </div>
             <div class="activity-item">
               <div class="activity-icon bg-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/></svg></div>
               <div class="activity-body">
-                <p class="activity-text"><strong>Commercial Mortgage</strong>: <strong>Person B</strong> linked ICICI loan (₹75,00,000)</p>
-                <span class="activity-time">Commercial Block Z-3 · Floor 1</span>
+                <p class="activity-text"><strong>Commercial Unit 1A Mortgage</strong>: <strong>Person B</strong> linked ICICI loan (₹75,00,000)</p>
+                <span class="activity-time">Pilotis Pod Block · Unit 1A</span>
               </div>
-              <span class="badge badge-yellow">Loan Active</span>
+              <span class="badge badge-yellow">Mortgage Active</span>
             </div>
           </div>
         </div>
@@ -424,12 +439,12 @@
     <div class="page" id="page-map3d">
       <div class="page-header">
         <div>
-          <h1 class="page-title">3D Interactive Property Map</h1>
-          <p class="page-subtitle">Click and hover individual floor slabs to see how 3D-ULPIN, owner, and loan status change dynamically floor to floor.</p>
+          <h1 class="page-title">3D Architectural Cadastre & Subdivided Flats</h1>
+          <p class="page-subtitle">Inspect L-shaped courtyard villas, cylindrical towers, stepped terraces, and twin skybridge towers with subdivided flat units.</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-outline" onclick="toggleExplodeFloors()" id="btnExplodeFull">
-            <span>Explode Floor Slices</span>
+            <span>Explode Flat Slices</span>
           </button>
           <button class="btn btn-outline" onclick="resetFullCamera()">Reset Camera</button>
         </div>
@@ -440,30 +455,39 @@
         <div class="map3d-sidebar">
 
           <div class="filter-group">
-            <label>Filter by Property Type</label>
+            <label>Jump to Architectural Style</label>
             <div class="filter-chip-group">
               <button class="filter-btn active" onclick="filterByPropertyType('all')">All</button>
-              <button class="filter-btn" onclick="filterByPropertyType('residential')">Residential</button>
-              <button class="filter-btn" onclick="filterByPropertyType('commercial')">Commercial</button>
-              <button class="filter-btn" onclick="filterByPropertyType('mixed')">Towers</button>
+              <button class="filter-btn" onclick="flyToArchitectureType('l-shaped')">L-Villas</button>
+              <button class="filter-btn" onclick="flyToArchitectureType('cylindrical')">Cylinder</button>
+              <button class="filter-btn" onclick="flyToArchitectureType('stepped')">Stepped</button>
+              <button class="filter-btn" onclick="flyToArchitectureType('twin')">Twin Bridge</button>
+              <button class="filter-btn" onclick="flyToArchitectureType('heritage')">Heritage</button>
             </div>
           </div>
 
           <div class="filter-group">
-            <label>How would you like to view?</label>
+            <label>Rendering & Slicing Mode</label>
             <div class="view-mode-buttons">
-              <button class="btn-mode active" id="btnModeStorey" onclick="setFullViewMode('storey')">
+              <button class="btn-mode active" id="btnModeFlats" onclick="setFullViewMode('flats')">
+                <span class="mode-icon">🏠</span>
+                <div>
+                  <div class="mode-title">Subdivided Flats</div>
+                  <div class="mode-desc">See Flat 101, 102, 103 with ULPIN</div>
+                </div>
+              </button>
+              <button class="btn-mode" id="btnModeStorey" onclick="setFullViewMode('storey')">
                 <span class="mode-icon">🏢</span>
                 <div>
-                  <div class="mode-title">Floor by Floor</div>
-                  <div class="mode-desc">See each floor's unique 3D-ULPIN</div>
+                  <div class="mode-title">Floor Slices</div>
+                  <div class="mode-desc">Floor-by-floor structure</div>
                 </div>
               </button>
               <button class="btn-mode" id="btnModeSolid" onclick="setFullViewMode('solid')">
                 <span class="mode-icon">🧱</span>
                 <div>
-                  <div class="mode-title">Whole Building</div>
-                  <div class="mode-desc">See the full building block</div>
+                  <div class="mode-title">Whole Building Mass</div>
+                  <div class="mode-desc">Full exterior architecture</div>
                 </div>
               </button>
             </div>
@@ -472,28 +496,28 @@
           <!-- Slicer -->
           <div class="filter-group">
             <div class="slider-header">
-              <label>Floor Slicer (Choose Floor)</label>
-              <span id="levelDisplay" class="mono text-cyan">All Floors (Ground to Roof)</span>
+              <label>Floor Slicer (Choose Height)</label>
+              <span id="levelDisplay" class="mono text-cyan">All Levels (Ground to Penthouse)</span>
             </div>
-            <input type="range" min="1" max="12" value="12" class="slider" id="floorSlider" oninput="sliceBuildingFloors(this.value)" />
+            <input type="range" min="1" max="14" value="14" class="slider" id="floorSlider" oninput="sliceBuildingFloors(this.value)" />
             <div class="range-labels">
               <span>Ground Floor</span>
-              <span>Middle Floors</span>
-              <span>Top Roof</span>
+              <span>Skybridge Level</span>
+              <span>Roof Helipad</span>
             </div>
           </div>
 
-          <!-- Inspector (Changes Floor to Floor) -->
+          <!-- Inspector (Changes Flat to Flat) -->
           <div class="parcel-info-box" id="inspectorBox">
-            <div class="info-title">Floor Unit Details</div>
-            <div class="info-row"><span>Floor 3D-ULPIN:</span><strong class="mono text-cyan" id="inspUlpin">IN-AP-040B-FL02</strong></div>
-            <div class="info-row"><span>Floor Level:</span><strong id="inspFloorLevel">Floor 2 (Flat 201)</strong></div>
-            <div class="info-row"><span>Owner Name:</span><strong class="text-green" id="inspOwner">Person X</strong></div>
-            <div class="info-row"><span>Seller / Prev:</span><span id="inspPrevOwner">Person Y</span></div>
-            <div class="info-row"><span>Bank Mortgage:</span><span class="badge badge-yellow" id="inspLoanBadge">State Bank: ₹28,50,000</span></div>
-            <div class="info-row"><span>Property Type:</span><span class="badge badge-green" id="inspTypeBadge">Residential</span></div>
+            <div class="info-title">Subdivided Flat Inspector</div>
+            <div class="info-row"><span>Flat 3D-ULPIN:</span><strong class="mono text-cyan" id="inspUlpin">IN-AP-040B-FL02-U201</strong></div>
+            <div class="info-row"><span>Unit Name:</span><strong id="inspFloorLevel">Flat 201 (East Wing)</strong></div>
+            <div class="info-row"><span>Owner:</span><strong class="text-green" id="inspOwner">Person X (100%)</strong></div>
+            <div class="info-row"><span>Structure:</span><span id="inspArch">Gable Villa Block</span></div>
+            <div class="info-row"><span>Bank Loan:</span><span class="badge badge-yellow" id="inspLoanBadge">State Bank: ₹28,50,000</span></div>
+            <div class="info-row"><span>Carpet Area:</span><span class="text-primary font-mono" id="inspCarpet">160 m² (3 BHK)</span></div>
             <button class="btn btn-primary" style="width:100%;margin-top:10px;font-size:12px;" onclick="switchPage('ledger')">
-              <span>Check Full Paperwork & Deeds</span>
+              <span>Check Deeds & Encumbrances</span>
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
           </div>
@@ -506,81 +530,92 @@
 
           <!-- Hover Tooltip Full -->
           <div class="three-hover-tooltip" id="fullHoverTooltip">
-            <div class="tht-id font-mono" id="fullThtId">IN-AP-040B-FL02</div>
-            <div class="tht-owner" id="fullThtOwner">Owner: Person X</div>
-            <div class="tht-floor text-cyan" id="fullThtFloor">Floor 2 (Flat 201)</div>
-            <div class="tht-loan text-yellow" id="fullThtLoan">Bank Loan: ₹28,50,000</div>
+            <div class="tht-flat-header">
+              <span class="tht-flat-badge" id="fullThtFlatName">Flat 201 (East Wing)</span>
+              <span class="tht-bhk" id="fullThtBhk">3 BHK • 160 m²</span>
+            </div>
+            <div class="tht-id font-mono" id="fullThtId">IN-AP-040B-FL02-U201</div>
+            <div class="tht-owner" id="fullThtOwner">Owner: Person X (100%)</div>
+            <div class="tht-loan" id="fullThtLoan">Bank Loan: State Bank ₹28,50,000</div>
+            <div class="tht-arch text-cyan" id="fullThtArch">Structure: L-Shaped Duplex Block</div>
           </div>
 
           <div class="viewport-hud-top">
             <div class="hud-chip">
               <span class="dot live"></span>
-              <span id="activeModelLabel">Neighbourhood 3D Cadastre</span>
+              <span id="activeModelLabel">Architectural 3D Cadastre (18 Complexes)</span>
             </div>
             <div class="hud-chip">
-              <span>Current Role: <strong id="hudRoleName">Citizen (Person X)</strong></span>
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&auto=format&fit=crop&q=80" class="hud-avatar-mini" id="hudAvatarImg" />
+              <span>Role: <strong id="hudRoleName">Citizen (Person X)</strong></span>
             </div>
           </div>
 
           <div class="map-overlay-legend" id="fullLegendBox">
-            <div class="legend-title" id="legendTitle">Land Use & Classification</div>
+            <div class="legend-title" id="legendTitle">Diverse Architectural Models</div>
             <div class="legend-grid-horizontal" id="legendGrid">
-              <div class="l-chip"><span style="background:#10b981"></span>Residential</div>
-              <div class="l-chip"><span style="background:#06b6d4"></span>Apartments</div>
-              <div class="l-chip"><span style="background:#6366f1"></span>Commercial</div>
-              <div class="l-chip"><span style="background:#f59e0b"></span>Mixed Towers</div>
+              <div class="l-chip"><span style="background:#10b981"></span>L-Courtyard Villas</div>
+              <div class="l-chip"><span style="background:#06b6d4"></span>Cylinder Helix Tower</div>
+              <div class="l-chip"><span style="background:#38bdf8"></span>Twin Skybridge Towers</div>
+              <div class="l-chip"><span style="background:#6366f1"></span>Commercial Pilotis</div>
+              <div class="l-chip"><span style="background:#f59e0b"></span>Gable Heritage</div>
             </div>
           </div>
 
           <div class="viewport-controls-bottom">
             <button class="hud-btn" onclick="setCameraViewpoint('iso')">3D Angle</button>
-            <button class="hud-btn" onclick="setCameraViewpoint('top')">Top View</button>
-            <button class="hud-btn" onclick="setCameraViewpoint('front')">Street View</button>
-            <button class="hud-btn" onclick="toggleExplodeFloors()">☲ Explode</button>
+            <button class="hud-btn" onclick="setCameraViewpoint('top')">Top Plan</button>
+            <button class="hud-btn" onclick="setCameraViewpoint('front')">Street Level</button>
+            <button class="hud-btn" onclick="toggleExplodeFloors()">☲ Explode Flats</button>
             <button class="hud-btn" onclick="toggleAutoRotate()" id="btnAutoRotate">⟳ Rotate</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ══════════ PAGE 3: CREATE PROPERTY ID ══════════ -->
+    <!-- ══════════ PAGE 3: CREATE FLAT 3D-ULPIN ══════════ -->
     <div class="page" id="page-generator">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Generate a New Digital Property ID</h1>
-          <p class="page-subtitle">Creates an official, floor-specific 3D-ULPIN ID for your land, building, or specific apartment floor.</p>
+          <h1 class="page-title">Generate Subdivided Flat 3D-ULPIN</h1>
+          <p class="page-subtitle">Mint an official digital 3D-ULPIN identifier for individual apartment flats, commercial units, or duplex wings.</p>
         </div>
       </div>
 
       <div class="generator-grid">
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Enter Property Details</span>
+            <span class="card-title">Enter Flat Subdivision Parameters</span>
           </div>
 
           <form id="ulpinGenForm" onsubmit="generateNewUlpin(event)">
             <div class="gen-form-grid">
               <div class="form-group">
-                <label>State & City</label>
-                <input type="text" class="input-field" id="genState" value="Andhra Pradesh, Vijayawada" />
+                <label>Building Complex</label>
+                <select class="select-full" id="genComplex">
+                  <option value="NZ-04">House Block Z-4 (Gable Villa)</option>
+                  <option value="NZ-13">Cylinder Helix Tower (Tower West)</option>
+                  <option value="NZ-14">Stepped Terrace Cascade (Green Crest 1)</option>
+                  <option value="NZ-15">Twin Skybridge Tower (Green Crest 2)</option>
+                </select>
               </div>
               <div class="form-group">
-                <label>Locality / Sector</label>
-                <input type="text" class="input-field" id="genMandal" value="Kondapalli Sector" />
+                <label>Floor Level</label>
+                <select class="select-full" id="genFloor" onchange="updateGeneratedFlatPreview()">
+                  <option value="FL01">Floor 1</option>
+                  <option value="FL02" selected>Floor 2</option>
+                  <option value="FL03">Floor 3</option>
+                  <option value="FL04">Floor 4</option>
+                  <option value="FL07">Floor 7 (Skybridge Level)</option>
+                </select>
               </div>
               <div class="form-group">
-                <label>Survey / Plot Number</label>
-                <input type="text" class="input-field" id="genSurvey" value="Plot 40B / House 112" />
-              </div>
-              <div class="form-group">
-                <label>Floor / Unit (Changes 3D-ULPIN)</label>
-                <select class="select-full" id="genFloor" onchange="previewFloorUlpin(this.value)">
-                  <option value="FL00">Ground Floor (Base) ➔ IN-AP-040B-FL00</option>
-                  <option value="FL01">Floor 1 (Flat 101) ➔ IN-AP-040B-FL01</option>
-                  <option value="FL02" selected>Floor 2 (Flat 201) ➔ IN-AP-040B-FL02</option>
-                  <option value="FL03">Floor 3 (Flat 301) ➔ IN-AP-040B-FL03</option>
-                  <option value="FL04">Floor 4 (Penthouse) ➔ IN-AP-040B-FL04</option>
-                  <option value="FL05">Floor 5 (Tower Unit) ➔ IN-AP-040B-FL05</option>
+                <label>Flat / Unit Subdivision</label>
+                <select class="select-full" id="genUnit" onchange="updateGeneratedFlatPreview()">
+                  <option value="U201" selected>Flat 201 (East Wing • 3 BHK)</option>
+                  <option value="U202">Flat 202 (West Wing • 2 BHK)</option>
+                  <option value="U203">Flat 203 (South Wing • 2 BHK)</option>
+                  <option value="U204">Flat 204 (North Duplex • 4 BHK)</option>
                 </select>
               </div>
               <div class="form-group">
@@ -592,19 +627,22 @@
                   <option value="Person C">Person C</option>
                   <option value="Person D">Person D</option>
                   <option value="Person E">Person E</option>
-                  <option value="Person F">Person F</option>
-                  <option value="Person G">Person G</option>
+                  <option value="Person S">Person S</option>
                 </select>
               </div>
               <div class="form-group">
+                <label>Flat Carpet Area (m²)</label>
+                <input type="text" class="input-field" id="genCarpet" value="160 m² (3 BHK)" />
+              </div>
+              <div class="form-group">
                 <label>Personalized Bank Loan</label>
-                <input type="text" class="input-field" id="genLoanAmount" value="Home Loan ₹28,50,000 (State Bank)" />
+                <input type="text" class="input-field" id="genLoanAmount" value="State Bank Home Loan: ₹28,50,000" />
               </div>
             </div>
 
             <div class="form-actions" style="margin-top: 18px;">
               <button type="submit" class="btn btn-primary" style="width:100%;">
-                Generate Floor-Specific Property ID Now
+                Mint Flat-Specific 3D-ULPIN Certificate
               </button>
             </div>
           </form>
@@ -612,21 +650,21 @@
 
         <div class="card" id="genOutputCard">
           <div class="card-header">
-            <span class="card-title">Generated Floor 3D-ULPIN</span>
-            <span class="badge badge-green" id="genStatusBadge">Generated Successfully</span>
+            <span class="card-title">Minted Flat 3D-ULPIN Certificate</span>
+            <span class="badge badge-green" id="genStatusBadge">Digital Token Minted ✓</span>
           </div>
 
           <div class="gen-output-box">
             <div class="output-row-hero">
-              <label>Official Floor 3D-ULPIN</label>
-              <div class="ulpin-hero-text font-mono" id="mintedUlpin">IN-AP-040B-FL02</div>
+              <label>Official Subdivided Flat 3D-ULPIN</label>
+              <div class="ulpin-hero-text font-mono" id="mintedUlpin">IN-AP-040B-FL02-U201</div>
             </div>
 
             <div class="output-details-grid">
               <div class="od-item"><label>Registered Owner</label><strong id="mintedOwner">Person X</strong></div>
-              <div class="od-item"><label>Floor Level</label><span class="text-cyan font-bold" id="mintedFloorLevel">Floor 2 (Flat 201)</span></div>
-              <div class="od-item"><label>Bank Loan</label><span class="text-yellow" id="mintedLoan">Home Loan ₹28,50,000</span></div>
-              <div class="od-item"><label>Legal Title</label><span class="text-green font-bold">Clear Freehold Title</span></div>
+              <div class="od-item"><label>Unit / Flat</label><span class="text-cyan font-bold" id="mintedFloorLevel">Flat 201 (East Wing, 3BHK)</span></div>
+              <div class="od-item"><label>Bank Loan</label><span class="text-yellow" id="mintedLoan">State Bank Loan: ₹28,50,000</span></div>
+              <div class="od-item"><label>Spatial Boundary</label><span class="text-green font-bold">Volumetric Unit Minted</span></div>
             </div>
 
             <div class="gen-next-actions" style="margin-top: 16px; display: flex; gap: 8px;">
@@ -642,28 +680,28 @@
     <div class="page" id="page-ledger">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Check Ownership & Loan Records</h1>
-          <p class="page-subtitle">Verify who truly owns each floor unit, inspect previous ownership history, and check unique bank loans.</p>
+          <h1 class="page-title">Check Subdivided Flat Ownership & Loans</h1>
+          <p class="page-subtitle">Verify who owns each subdivided flat unit, inspect previous ownership deeds, and check individual bank mortgage encumbrances.</p>
         </div>
       </div>
 
       <div class="ledger-layout">
         <div class="ledger-search-bar">
-          <input type="text" id="ledgerQueryInput" placeholder="Enter Property ID (e.g. IN-AP-040B-FL02)..." class="search-lg" />
+          <input type="text" id="ledgerQueryInput" placeholder="Enter Flat ULPIN (e.g. IN-AP-040B-FL02-U201)..." class="search-lg" />
           <button class="btn btn-primary" onclick="executeLedgerQuery()">Lookup Records</button>
         </div>
 
         <div class="ledger-grid">
           <div class="card ledger-main-card">
             <div class="card-header">
-              <span class="card-title" id="ledgerDossierTitle">Property Record: IN-AP-040B-FL02</span>
+              <span class="card-title" id="ledgerDossierTitle">Flat Record: IN-AP-040B-FL02-U201</span>
               <div class="card-actions">
-                <span class="badge badge-green">Clear Legal Title</span>
+                <span class="badge badge-green">Clear Title Deed</span>
               </div>
             </div>
 
             <div class="record-tabs">
-              <button class="tab-btn active" onclick="switchTab(this, 'tab-baunit')">Floor Unit & Owner</button>
+              <button class="tab-btn active" onclick="switchTab(this, 'tab-baunit')">Flat Unit & Owner</button>
               <button class="tab-btn" onclick="switchTab(this, 'tab-rrr')">Personalized Bank Loans</button>
               <button class="tab-btn" onclick="switchTab(this, 'tab-docs')">Official Documents</button>
             </div>
@@ -671,11 +709,11 @@
             <div class="tab-content active" id="tab-baunit">
               <div class="record-section">
                 <div class="record-grid">
-                  <div class="record-field"><label>Floor 3D-ULPIN</label><span class="mono text-cyan font-bold" id="lUlpin">IN-AP-040B-FL02</span></div>
+                  <div class="record-field"><label>Flat 3D-ULPIN</label><span class="mono text-cyan font-bold" id="lUlpin">IN-AP-040B-FL02-U201</span></div>
                   <div class="record-field"><label>Current Owner</label><strong class="text-green font-bold" id="lOwner">Person X (100% Title)</strong></div>
-                  <div class="record-field"><label>Floor Level</label><strong class="text-cyan" id="lFloorLevel">Floor 2 (Flat 201)</strong></div>
-                  <div class="record-field"><label>Building Name</label><span id="lName">House Block Z-4</span></div>
-                  <div class="record-field"><label>Location</label><span>Vijayawada, NTR District</span></div>
+                  <div class="record-field"><label>Subdivision Unit</label><strong class="text-cyan" id="lFloorLevel">Flat 201 (East Wing, 3BHK)</strong></div>
+                  <div class="record-field"><label>Building Architecture</label><span id="lName">Gable Courtyard Villa Block</span></div>
+                  <div class="record-field"><label>Carpet Area</label><span class="mono" id="lCarpet">160 m² (1,722 sq.ft)</span></div>
                   <div class="record-field"><label>Property Type</label><span class="badge badge-green">Residential Freehold</span></div>
                 </div>
               </div>
@@ -687,7 +725,7 @@
                   <div class="rrr-type ownership">Ownership</div>
                   <div class="rrr-details">
                     <div class="rrr-party" id="lRrrOwner">Person X (100% Full Owner)</div>
-                    <div class="rrr-meta">Registered Sale Deed 2019 · Valid & Complete</div>
+                    <div class="rrr-meta">Registered Flat Sale Deed 2019 · Valid & Complete</div>
                   </div>
                   <span class="badge badge-green">Verified</span>
                 </div>
@@ -715,7 +753,7 @@
                 <div class="doc-item">
                   <div class="doc-icon">📜</div>
                   <div class="doc-info">
-                    <span class="doc-name">Registered Floor Sale Deed</span>
+                    <span class="doc-name">Registered Flat Sale Deed</span>
                     <span class="doc-meta" id="lDocDeedMeta">Transferred from Person Y to Person X</span>
                   </div>
                   <button class="btn-sm btn-outline">View Summary</button>
@@ -723,8 +761,8 @@
                 <div class="doc-item">
                   <div class="doc-icon">📐</div>
                   <div class="doc-info">
-                    <span class="doc-name">Digital 3D Floor Boundary Plan</span>
-                    <span class="doc-meta">Height boundary and volumetric spatial unit</span>
+                    <span class="doc-name">Digital 3D Flat Spatial Polygon</span>
+                    <span class="doc-meta">Volumetric unit coordinates verified</span>
                   </div>
                   <button class="btn-sm btn-outline" onclick="switchPage('map3d')">Open in 3D</button>
                 </div>
@@ -774,18 +812,18 @@
       </div>
     </div>
 
-    <!-- ══════════ PAGE 5: CITIZEN OWNERS LIST (Person A to Person Z) ══════════ -->
+    <!-- ══════════ PAGE 5: CITIZEN OWNERS DIRECTORY (Person A to Person Z) ══════════ -->
     <div class="page" id="page-ownership">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Registered Property Owners (Person Roster)</h1>
-          <p class="page-subtitle">Directory of registered citizens from Person A to Person Z with individual floor units and personalized loan statuses.</p>
+          <h1 class="page-title">Subdivided Flat Owners Directory (Person A to Z)</h1>
+          <p class="page-subtitle">Directory of registered citizens from Person A to Person Z across various architectural complexes with individual flat units, 3D-ULPINs, and personalized bank loans.</p>
         </div>
       </div>
       <div class="card">
         <table class="data-table">
           <thead>
-            <tr><th>Citizen ID</th><th>Owner Name</th><th>Floor 3D-ULPIN</th><th>Floor Level</th><th>Property Size</th><th>Personalized Bank Loan</th><th>Status</th><th>Actions</th></tr>
+            <tr><th>Citizen ID</th><th>Owner Name</th><th>Flat 3D-ULPIN</th><th>Architecture Style</th><th>Flat / Unit Level</th><th>Size</th><th>Personalized Bank Loan</th><th>Status</th><th>Actions</th></tr>
           </thead>
           <tbody id="ownersTableBody">
             <!-- Dynamically populated with Person A through Person Z -->
@@ -799,7 +837,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Property Ownership Transfer Applications</h1>
-          <p class="page-subtitle">Track the transfer of property names from seller to buyer.</p>
+          <p class="page-subtitle">Track the transfer of flat ownership names from seller to buyer.</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-primary" onclick="executeRoleAction()">Apply to Transfer Name</button>
@@ -809,21 +847,21 @@
         <div class="card">
           <div class="card-header"><span class="card-title">Recent Transfer Applications</span></div>
           <table class="data-table">
-            <thead><tr><th>Application ID</th><th>Floor 3D-ULPIN</th><th>Seller</th><th>Buyer</th><th>Status</th><th>Action</th></tr></thead>
+            <thead><tr><th>Application ID</th><th>Flat 3D-ULPIN</th><th>Seller</th><th>Buyer</th><th>Status</th><th>Action</th></tr></thead>
             <tbody>
               <tr>
-                <td class="mono">TRF-2847</td><td class="mono text-cyan">IN-AP-040B-FL02</td>
+                <td class="mono">TRF-2847</td><td class="mono text-cyan">IN-AP-040B-FL02-U201</td>
                 <td>Person Y</td><td>Person X</td><td><span class="badge badge-green">Completed & Approved</span></td>
                 <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View</button></td>
               </tr>
               <tr>
-                <td class="mono">TRF-3102</td><td class="mono text-cyan">IN-AP-040B-FL01-D</td>
-                <td>Person Z</td><td>Person D</td><td><span class="badge badge-yellow">Pending Review</span></td>
+                <td class="mono">TRF-3102</td><td class="mono text-cyan">IN-AP-040B-FL01-U101</td>
+                <td>Person Z</td><td>Person A</td><td><span class="badge badge-yellow">Pending Review</span></td>
                 <td><button class="btn-sm btn-primary" onclick="approveMutationPrompt('TRF-3102')">Review</button></td>
               </tr>
               <tr>
-                <td class="mono">TRF-3145</td><td class="mono text-cyan">IN-AP-040B-FL03-B</td>
-                <td>Person Z</td><td>Person Y</td><td><span class="badge badge-yellow">Pending Review</span></td>
+                <td class="mono">TRF-3145</td><td class="mono text-cyan">IN-AP-040B-TW2-FL07-U702</td>
+                <td>Person Z</td><td>Person S</td><td><span class="badge badge-yellow">Pending Review</span></td>
                 <td><button class="btn-sm btn-primary" onclick="approveMutationPrompt('TRF-3145')">Review</button></td>
               </tr>
             </tbody>
@@ -833,9 +871,9 @@
           <div class="card-header"><span class="card-title">How Transfer Works</span></div>
           <div class="timeline">
             <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">1. Buyer & Seller submit deed</span><span class="tl-date">Complete</span></div></div>
-            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">2. 3D Floor Boundary Checked</span><span class="tl-date">Zero overlaps found</span></div></div>
+            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">2. 3D Flat Boundary Checked</span><span class="tl-date">Zero overlaps found</span></div></div>
             <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">3. Revenue Officer / Tahsildar approves</span><span class="tl-date">Signed with Digital Certificate</span></div></div>
-            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">4. Floor 3D-ULPIN re-issued</span><span class="tl-date">New owner takes legal title</span></div></div>
+            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">4. Flat 3D-ULPIN re-issued</span><span class="tl-date">New owner takes legal title</span></div></div>
           </div>
         </div>
       </div>
@@ -845,27 +883,35 @@
     <div class="page" id="page-cartography">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Old Paper Map Digitizer</h1>
-          <p class="page-subtitle">Upload old paper maps or blueprints to automatically create digital 3D parcels.</p>
+          <h1 class="page-title">Old Paper Map & Blueprint Digitizer</h1>
+          <p class="page-subtitle">Upload architectural floor plans, blueprints, or cadastral maps to automatically construct 3D subdivided flats.</p>
         </div>
       </div>
       <div class="carto-grid">
         <div class="card">
-          <div class="card-header"><span class="card-title">Upload Paper Map</span></div>
+          <div class="card-header"><span class="card-title">Upload Blueprint or Cadastral Map</span></div>
           <div class="upload-zone">
-            <p><strong>Drag and drop your village or building map</strong></p>
-            <span>Supports PDF, Scanned Image, JPG, PNG</span>
+            <p><strong>Drag and drop architectural blueprint or floor plan</strong></p>
+            <span>Supports DWG, DXF, PDF, Scanned Image, JPG, PNG</span>
             <button class="btn btn-primary" style="margin-top:12px" onclick="triggerMapUpload()">Choose File from Computer</button>
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-title">Recent Digitized Maps</span></div>
+          <div class="card-header"><span class="card-title">Recent Digitized Blueprints</span></div>
           <div class="queue-list">
             <div class="queue-item">
-              <div class="queue-thumb">🗺️</div>
+              <div class="queue-thumb">🏢</div>
               <div class="queue-info">
-                <span class="queue-name">Neighbourhood Map 1987.pdf</span>
-                <span class="queue-status">Converted 48 houses into 3D floor parcels ✓</span>
+                <span class="queue-name">Twin_Towers_Skybridge_Flats.pdf</span>
+                <span class="queue-status">Subdivided 24 flats across 12 floors with 3D-ULPIN ✓</span>
+              </div>
+              <span class="queue-badge done">Complete</span>
+            </div>
+            <div class="queue-item">
+              <div class="queue-thumb">🏡</div>
+              <div class="queue-info">
+                <span class="queue-name">Courtyard_Villas_Sector40.dwg</span>
+                <span class="queue-status">Extracted 8 L-shaped duplex parcels ✓</span>
               </div>
               <span class="queue-badge done">Complete</span>
             </div>
@@ -874,21 +920,18 @@
       </div>
     </div>
 
-    <!-- ══════════ PAGE 8: SECURITY ══════════ -->
+    <!-- ══════════ PAGE 8: SECURITY & CREDENTIALS DIRECTORY ══════════ -->
     <div class="page" id="page-gateway">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Security & Citizen Protection</h1>
-          <p class="page-subtitle">Keeps your property records safe from unauthorized changes.</p>
+          <h1 class="page-title">Security & Role Credentials Directory</h1>
+          <p class="page-subtitle">View profile photos, official government IDs, Bar Council registrations, and banking credentials for all authorized personas.</p>
         </div>
       </div>
-      <div class="card">
-        <div class="security-grid">
-          <div class="sec-metric"><span class="sec-value text-green">100%</span><span class="sec-label">Protected</span></div>
-          <div class="sec-metric"><span class="sec-value text-cyan">2-Factor</span><span class="sec-label">OTP Verification</span></div>
-          <div class="sec-metric"><span class="sec-value text-green">0</span><span class="sec-label">Fake Records</span></div>
-          <div class="sec-metric"><span class="sec-value text-yellow">24/7</span><span class="sec-label">System Active</span></div>
-        </div>
+
+      <!-- CREDENTIALS GRID -->
+      <div class="credentials-directory-grid" id="credDirectoryGrid">
+        <!-- Rendered dynamically -->
       </div>
     </div>
 
@@ -897,7 +940,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Activity History</h1>
-          <p class="page-subtitle">Record of all property updates.</p>
+          <p class="page-subtitle">Record of all property and flat updates.</p>
         </div>
       </div>
       <div class="card">
@@ -905,12 +948,71 @@
           <div class="audit-row">
             <span class="audit-time">Today</span>
             <span class="audit-action approve">VERIFIED</span>
-            <span class="audit-desc">Floor <code>IN-AP-040B-FL02</code> ownership confirmed for <strong>Person X</strong></span>
+            <span class="audit-desc">Flat <code>IN-AP-040B-FL02-U201</code> ownership confirmed for <strong>Person X</strong></span>
           </div>
           <div class="audit-row">
             <span class="audit-time">Yesterday</span>
             <span class="audit-action approve">MORTGAGE</span>
-            <span class="audit-desc">Bank loan updated for <strong>Person B</strong> (₹75,00,000 on Commercial Block Z-3)</span>
+            <span class="audit-desc">Bank loan updated for <strong>Person B</strong> (₹75,00,000 on Commercial Pod Unit 1A)</span>
+          </div>
+          <div class="audit-row">
+            <span class="audit-time">2 days ago</span>
+            <span class="audit-action approve">SKYBRIDGE</span>
+            <span class="audit-desc">Skybridge connection verified at Floor 7 between Green Towers 1 & 2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FULL CREDENTIALS & ID CARD MODAL ── -->
+    <div class="role-modal-overlay" id="credentialsModalOverlay">
+      <div class="cred-modal-card">
+        <div class="cred-modal-header">
+          <div class="cm-left">
+            <span class="cm-badge-official">GOVERNMENT OF ANDHRA PRADESH • LAND & CADASTRE PORTAL</span>
+            <h3 class="cm-title">Official Identity & Digital Credentials</h3>
+          </div>
+          <button class="cm-close-btn" onclick="closeCredentialsModal()">&times;</button>
+        </div>
+
+        <div class="cred-id-card" id="modalIdCard">
+          <div class="id-card-top">
+            <div class="id-card-photo-box">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" alt="ID Photo" id="modalIdPhoto" />
+              <span class="id-status-badge">ACTIVE VERIFIED</span>
+            </div>
+            <div class="id-card-main-info">
+              <h2 class="id-name" id="modalIdName">Person X</h2>
+              <span class="id-designation" id="modalIdRole">Registered Citizen / Property Owner</span>
+              <div class="id-fields-grid">
+                <div class="idf"><label>Official Identifier:</label><strong class="font-mono text-cyan" id="modalIdNumber">CIT-98472-PX</strong></div>
+                <div class="idf"><label>Authorized Email:</label><span id="modalIdEmail">person.x@citizen.ap.gov.in</span></div>
+                <div class="idf"><label>Security Clearance:</label><span class="badge badge-green" id="modalIdClearance">Level 1 (Citizen Freehold)</span></div>
+                <div class="idf"><label>Assigned Property:</label><span class="font-mono" id="modalIdProperty">Flat 201 (IN-AP-040B-FL02-U201)</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="id-card-bottom">
+            <div class="id-passkey-box">
+              <span class="ip-label">AUTHENTICATION PASSKEY HASH</span>
+              <code class="ip-hash" id="modalIdPasskey">0x7f8a92b3c4d5e6f1a8b9c0d1e2f3a4b5</code>
+            </div>
+            <div class="id-seal-badge">
+              <span>DIGITAL SEAL</span>
+              <strong>VERIFIED ✓</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="cred-switch-role-bar">
+          <label>Switch Role & Login as:</label>
+          <div class="cred-role-btns">
+            <button class="crb-btn" onclick="selectRoleAndClose('citizen')">👤 Citizen (Person X)</button>
+            <button class="crb-btn" onclick="selectRoleAndClose('advocate')">⚖️ Advocate Verma</button>
+            <button class="crb-btn" onclick="selectRoleAndClose('employee')">🏛️ Tahsildar K. Rao</button>
+            <button class="crb-btn" onclick="selectRoleAndClose('surveyor')">📐 Surveyor Anand</button>
+            <button class="crb-btn" onclick="selectRoleAndClose('bank')">🏦 Loan Officer Priya</button>
           </div>
         </div>
       </div>
