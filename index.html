@@ -7,9 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Three.js + OrbitControls for 3D visualizer -->
+  <!-- Three.js + OrbitControls + TWEEN for smooth camera animations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -148,18 +149,23 @@
       </div>
 
       <div class="topbar-right">
+        <!-- Interactive Environment Lighting Toggle -->
+        <button class="btn btn-sm btn-outline" id="themeLightingBtn" onclick="toggleLightingMode()" title="Toggle Day / Sunset / Night mode">
+          <span id="lightingIcon">☀️</span> <span id="lightingLabel">Day View</span>
+        </button>
+        
         <!-- Quick Property Search -->
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           <input type="text" id="globalSearch" placeholder="Search Property ID (e.g. IN-AP-040B)..." onkeypress="handleQuickUlpinSearch(event)" />
         </div>
         <button class="btn btn-sm btn-primary" onclick="lookupQuickUlpin()">
-          Search
+          Search & Fly To
         </button>
       </div>
     </header>
 
-    <!-- ROLE WELCOME BANNER (Dynamically updates per role) -->
+    <!-- ROLE WELCOME BANNER -->
     <div class="role-banner" id="roleBanner">
       <div class="role-banner-content">
         <div class="rb-icon" id="rbIcon">👤</div>
@@ -171,12 +177,12 @@
       <div class="rb-badge" id="rbBadge">Citizen Access</div>
     </div>
 
-    <!-- ══════════ PAGE 1: DASHBOARD (SIMPLE & CLEAR) ══════════ -->
+    <!-- ══════════ PAGE 1: DASHBOARD ══════════ -->
     <div class="page active" id="page-dashboard">
       <div class="page-header">
         <div>
           <h1 class="page-title">Digital Land & 3D Property Portal</h1>
-          <p class="page-subtitle">Simple, transparent property records for every citizen. View ownership, check house prices, and verify land boundaries.</p>
+          <p class="page-subtitle">Simple, transparent property records. Click and explore 3D buildings, verify ownership, and inspect floor units.</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-outline" onclick="switchPage('generator')">
@@ -212,7 +218,7 @@
         </div>
       </div>
 
-      <!-- STATS ROW IN SIMPLE WORDS -->
+      <!-- STATS ROW IN SIMPLE WORDS (NO PRICES) -->
       <div class="stats-grid" style="margin-top: 18px;">
         <div class="stat-card" style="--accent:#6366f1">
           <div class="stat-icon" style="background:rgba(99,102,241,0.15)">
@@ -272,9 +278,17 @@
           <div class="card-header">
             <div class="card-header-left">
               <span class="card-title">Interactive 3D Neighbourhood View</span>
-              <span class="badge badge-green" style="margin-left:10px">Click any house to view details</span>
+              <span class="badge badge-green" style="margin-left:10px">Hover & Click any house</span>
             </div>
             <div class="card-actions">
+              <!-- Interactive Type Filter Pills -->
+              <div class="type-filter-pills" id="dashTypeFilter">
+                <button class="filter-pill active" onclick="filterByPropertyType('all')">All Houses</button>
+                <button class="filter-pill" onclick="filterByPropertyType('residential')">Residential</button>
+                <button class="filter-pill" onclick="filterByPropertyType('commercial')">Commercial</button>
+                <button class="filter-pill" onclick="filterByPropertyType('mixed')">Towers</button>
+              </div>
+
               <div class="view-toggle-pills" id="dashViewToggle">
                 <button class="view-pill active" onclick="setDashboardViewMode('storey')">Floor by Floor</button>
                 <button class="view-pill" onclick="setDashboardViewMode('solid')">Whole Building</button>
@@ -286,18 +300,25 @@
           <div class="map-3d-container" id="dashMap3dContainer">
             <div id="dashThreeCanvasContainer" class="three-viewport"></div>
 
-            <!-- Price Legend Explained in Simple Words -->
+            <!-- Floating 3D Hover Tooltip -->
+            <div class="three-hover-tooltip" id="dashHoverTooltip">
+              <div class="tht-id font-mono" id="thtId">IN-AP-040B-FL02</div>
+              <div class="tht-owner" id="thtOwner">Owner: Person X</div>
+              <div class="tht-type" id="thtType">Residential • Freehold</div>
+            </div>
+
+            <!-- Property Type Legend (Replaced Price Legend) -->
             <div class="map-legend">
               <div class="legend-header">
-                <span class="legend-title">Price Guide</span>
-                <span class="legend-sub">Cost per sq. meter</span>
+                <span class="legend-title">Property Types</span>
+                <span class="legend-sub">Land Use & Classification</span>
               </div>
               <div class="legend-items">
-                <div class="legend-item"><span class="legend-color" style="background:#047857"></span>₹11,314 (Affordable)</div>
-                <div class="legend-item"><span class="legend-color" style="background:#10b981"></span>₹11,455</div>
-                <div class="legend-item"><span class="legend-color" style="background:#fde047"></span>₹13,743 (Average)</div>
-                <div class="legend-item"><span class="legend-color" style="background:#ea580c"></span>₹13,856</div>
-                <div class="legend-item"><span class="legend-color" style="background:#ef4444"></span>₹14,830 (Premium)</div>
+                <div class="legend-item"><span class="legend-color" style="background:#10b981"></span>Residential Houses</div>
+                <div class="legend-item"><span class="legend-color" style="background:#06b6d4"></span>High-Rise Apartments</div>
+                <div class="legend-item"><span class="legend-color" style="background:#6366f1"></span>Commercial / Retail</div>
+                <div class="legend-item"><span class="legend-color" style="background:#f59e0b"></span>Mixed-Use Towers</div>
+                <div class="legend-item"><span class="legend-color" style="background:#ec4899"></span>Public Domain / Annex</div>
               </div>
             </div>
 
@@ -308,6 +329,7 @@
             </div>
 
             <div class="map-controls">
+              <button class="map-btn" title="Explode / Separate Floors" onclick="toggleExplodeFloors()" id="btnExplodeFloors">☲</button>
               <button class="map-btn" title="Rotate Model" onclick="rotateDashCamera()">⟳</button>
               <button class="map-btn" title="Zoom In" onclick="zoomDashCamera(-5)">+</button>
               <button class="map-btn" title="Zoom Out" onclick="zoomDashCamera(5)">−</button>
@@ -405,9 +427,12 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">3D Interactive Property Map</h1>
-          <p class="page-subtitle">Click any building or floor to see who owns it, how much it costs, and its foundation stability.</p>
+          <p class="page-subtitle">Click and hover any building or floor to see who owns it, inspect floor boundaries, and explode building slices.</p>
         </div>
         <div class="header-actions">
+          <button class="btn btn-outline" onclick="toggleExplodeFloors()" id="btnExplodeFull">
+            <span>Explode Floor Slices</span>
+          </button>
           <button class="btn btn-outline" onclick="resetFullCamera()">Reset Camera</button>
         </div>
       </div>
@@ -415,6 +440,16 @@
       <div class="map3d-full-container">
         <!-- 3D Sidebar Controls -->
         <div class="map3d-sidebar">
+
+          <div class="filter-group">
+            <label>Interactive Filter by Type</label>
+            <div class="filter-chip-group">
+              <button class="filter-btn active" onclick="filterByPropertyType('all')">All</button>
+              <button class="filter-btn" onclick="filterByPropertyType('residential')">Residential</button>
+              <button class="filter-btn" onclick="filterByPropertyType('commercial')">Commercial</button>
+              <button class="filter-btn" onclick="filterByPropertyType('mixed')">Towers</button>
+            </div>
+          </div>
 
           <div class="filter-group">
             <label>How would you like to view?</label>
@@ -471,7 +506,7 @@
             <div class="info-row"><span>Owner Name:</span><strong class="text-green" id="inspOwner">Person X</strong></div>
             <div class="info-row"><span>Seller / Prev:</span><span id="inspPrevOwner">Person Y</span></div>
             <div class="info-row"><span>Original Allotment:</span><span id="inspOrigOwner">Person Z</span></div>
-            <div class="info-row"><span>Est. Price:</span><strong class="text-green" id="inspPrice">₹13,856 / m²</strong></div>
+            <div class="info-row"><span>Property Type:</span><span class="badge badge-green" id="inspTypeBadge">Residential</span></div>
             <button class="btn btn-primary" style="width:100%;margin-top:10px;font-size:12px;" onclick="switchPage('ledger')">
               <span>Check Full Paperwork & Deeds</span>
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -484,24 +519,32 @@
         <div class="map3d-main">
           <div id="fullThreeCanvasContainer" class="three-viewport"></div>
 
+          <!-- Hover Tooltip Full -->
+          <div class="three-hover-tooltip" id="fullHoverTooltip">
+            <div class="tht-id font-mono" id="fullThtId">IN-AP-040B-FL02</div>
+            <div class="tht-owner" id="fullThtOwner">Owner: Person X</div>
+            <div class="tht-type" id="fullThtType">Residential • Freehold</div>
+          </div>
+
           <div class="viewport-hud-top">
             <div class="hud-chip">
               <span class="dot live"></span>
-              <span id="activeModelLabel">Neighbourhood Property Map</span>
+              <span id="activeModelLabel">Neighbourhood 3D Cadastre</span>
             </div>
             <div class="hud-chip">
               <span>Ground: <strong>Solid Foundation (+47.3m)</strong></span>
             </div>
           </div>
 
+          <!-- Type Legend (No Prices) -->
           <div class="map-overlay-legend" id="fullLegendBox">
-            <div class="legend-title" id="legendTitle">Price Guide (Cost per m²)</div>
+            <div class="legend-title" id="legendTitle">Land Use & Property Classification</div>
             <div class="legend-grid-horizontal" id="legendGrid">
-              <div class="l-chip"><span style="background:#047857"></span>₹11,314 (Low)</div>
-              <div class="l-chip"><span style="background:#10b981"></span>₹11,455</div>
-              <div class="l-chip"><span style="background:#fde047"></span>₹13,743 (Mid)</div>
-              <div class="l-chip"><span style="background:#ea580c"></span>₹13,856</div>
-              <div class="l-chip"><span style="background:#ef4444"></span>₹14,830 (High)</div>
+              <div class="l-chip"><span style="background:#10b981"></span>Residential</div>
+              <div class="l-chip"><span style="background:#06b6d4"></span>High-Rise Apartments</div>
+              <div class="l-chip"><span style="background:#6366f1"></span>Commercial / Retail</div>
+              <div class="l-chip"><span style="background:#f59e0b"></span>Mixed-Use Towers</div>
+              <div class="l-chip"><span style="background:#ec4899"></span>Public Domain</div>
             </div>
           </div>
 
@@ -509,6 +552,7 @@
             <button class="hud-btn" onclick="setCameraViewpoint('iso')">3D Angle</button>
             <button class="hud-btn" onclick="setCameraViewpoint('top')">Top View</button>
             <button class="hud-btn" onclick="setCameraViewpoint('front')">Street View</button>
+            <button class="hud-btn" onclick="toggleExplodeFloors()">☲ Explode</button>
             <button class="hud-btn" onclick="toggleAutoRotate()" id="btnAutoRotate">⟳ Rotate</button>
           </div>
         </div>
@@ -637,7 +681,7 @@
                   <div class="record-field"><label>Current Owner</label><strong class="text-green font-bold" id="lOwner">Person X (100% Title)</strong></div>
                   <div class="record-field"><label>Building / Flat</label><span id="lName">Block Z-4, Floor 2, Flat 201</span></div>
                   <div class="record-field"><label>Location</label><span>Vijayawada, NTR District</span></div>
-                  <div class="record-field"><label>Estimated Market Value</label><span class="text-green font-bold">₹24,94,080</span></div>
+                  <div class="record-field"><label>Property Type</label><span class="badge badge-green">Residential Freehold</span></div>
                   <div class="record-field"><label>Foundation Grounding</label><span class="text-green">Built on Solid Ground (+47.3m)</span></div>
                 </div>
               </div>
@@ -664,7 +708,7 @@
                 <div class="rrr-item">
                   <div class="rrr-type responsibility">Property Tax</div>
                   <div class="rrr-details">
-                    <div class="rrr-party">Municipal Tax — ₹18,400/yr</div>
+                    <div class="rrr-party">Municipal Tax — Paid Up to Date</div>
                     <div class="rrr-meta">Fully paid for current financial year</div>
                   </div>
                   <span class="badge badge-green">Tax Paid</span>
@@ -747,13 +791,14 @@
       <div class="card">
         <table class="data-table">
           <thead>
-            <tr><th>Citizen ID</th><th>Owner Name</th><th>Property ID</th><th>Property Size</th><th>Status</th><th>Actions</th></tr>
+            <tr><th>Citizen ID</th><th>Owner Name</th><th>Property ID</th><th>Property Size</th><th>Type</th><th>Status</th><th>Actions</th></tr>
           </thead>
           <tbody>
             <tr>
               <td class="mono">CIT-001</td>
               <td><div class="owner-cell"><div class="mini-avatar">PX</div>Person X</div></td>
               <td class="mono text-cyan">IN-AP-040B-FL02</td><td>180 m²</td>
+              <td><span class="badge badge-green">Residential</span></td>
               <td><span class="badge badge-green">Verified Owner</span></td>
               <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View Records</button></td>
             </tr>
@@ -761,6 +806,7 @@
               <td class="mono">CIT-002</td>
               <td><div class="owner-cell"><div class="mini-avatar">PY</div>Person Y</div></td>
               <td class="mono text-cyan">IN-AP-040B-FL01</td><td>220 m²</td>
+              <td><span class="badge badge-green">Residential</span></td>
               <td><span class="badge badge-green">Verified Owner</span></td>
               <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View Records</button></td>
             </tr>
@@ -768,6 +814,7 @@
               <td class="mono">CIT-003</td>
               <td><div class="owner-cell"><div class="mini-avatar">PZ</div>Person Z</div></td>
               <td class="mono text-cyan">IN-AP-040B-FL04</td><td>350 m²</td>
+              <td><span class="badge badge-blue">Mixed-Use</span></td>
               <td><span class="badge badge-green">Verified Owner</span></td>
               <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View Records</button></td>
             </tr>

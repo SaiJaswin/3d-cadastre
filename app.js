@@ -1,9 +1,14 @@
 /* ─────────────────────────────────────────────────────────────
    Digital Land & Property Portal — app.js
-   With:
-   - Dynamic Persona/Role Switcher (Citizen, Advocate, Employee, Surveyor, Bank)
+   Full 3D Interactive Cadastre Engine (No Plot Costs):
+   - Dynamic Multi-Persona Switcher (Citizen, Advocate, Employee, Surveyor, Bank)
    - Person X, Person Y, Person Z
-   - Three.js Grounded 3D Engine
+   - 3D Hover Tooltips & Raycasting
+   - Animated Floor Explode / Slicer Mode
+   - Day / Sunset / Night Lighting Toggle
+   - Instant Property Type Filtering
+   - Smooth Camera Fly-To Animations
+   - 100% Grounded Foundation Footings (Zero Floating)
 ───────────────────────────────────────────────────────────── */
 
 // ── ROLE DEFINITIONS & SWITCHER ──────────────────────────────
@@ -58,13 +63,11 @@ const USER_ROLES = {
 function changeUserRole(roleKey) {
   const role = USER_ROLES[roleKey] || USER_ROLES.citizen;
 
-  // Sync both dropdowns
   const topSelect = document.getElementById('topbarRoleSelect');
   const sideSelect = document.getElementById('sidebarRoleSelect');
   if (topSelect) topSelect.value = roleKey;
   if (sideSelect) sideSelect.value = roleKey;
 
-  // Update Top Banner
   const rbIcon = document.getElementById('rbIcon');
   const rbTitle = document.getElementById('rbTitle');
   const rbDesc = document.getElementById('rbDesc');
@@ -74,15 +77,12 @@ function changeUserRole(roleKey) {
   if (rbDesc) rbDesc.textContent = role.bannerDesc;
   if (rbBadge) rbBadge.textContent = role.badge;
 
-  // Update Sidebar Footer Profile Card
   const fAvatar = document.getElementById('footerAvatar');
   const fName = document.getElementById('footerUserName');
   const fRole = document.getElementById('footerUserRole');
   if (fAvatar) fAvatar.textContent = role.avatar;
   if (fName) fName.textContent = role.name;
   if (fRole) fRole.textContent = role.roleTitle;
-
-  console.log(`[Role Switch] Switched active profile to: ${role.roleTitle} (${role.name})`);
 }
 window.changeUserRole = changeUserRole;
 
@@ -145,42 +145,37 @@ function switchTab(btn, tabId) {
 }
 window.switchTab = switchTab;
 
-// ── PROPERTY DATA (Person X, Person Y, Person Z) ──────────────
-const PRICE_PALETTE = {
-  11314: '#047857',
-  11455: '#10b981',
-  11473: '#6ee7b7',
-  13743: '#fde047',
-  13756: '#f59e0b',
-  13856: '#ea580c',
-  13942: '#f97316',
-  14797: '#ef4444',
-  14830: '#b91c1c',
-  unknown: '#94a3b8'
+// ── PROPERTY DATA & LAND-USE CLASSIFICATION (NO PLOT COSTS) ──
+const TYPE_PALETTE = {
+  residential: '#10b981', // Emerald green
+  commercial:  '#6366f1', // Indigo / Purple
+  mixed:       '#06b6d4', // Cyan
+  public:      '#ec4899', // Pink
+  tower:       '#f59e0b'  // Amber
 };
 
 const NEIGHBOURHOOD_BUILDINGS = [
-  { id: 'NZ-01', x: -36, z: 22, w: 10, d: 8,  floors: 4, price: 11455, ulpin_3d: 'IN-AP-040B-FL01', owner: 'Person Y (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'House Block Z-1' },
-  { id: 'NZ-02', x: -22, z: 22, w: 10, d: 8,  floors: 4, price: 11314, ulpin_3d: 'IN-AP-040B-FL01-B', owner: 'Person A (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-2' },
-  { id: 'NZ-03', x: -8,  z: 22, w: 10, d: 8,  floors: 4, price: 11455, ulpin_3d: 'IN-AP-040B-FL01-C', owner: 'Person B (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-3' },
-  { id: 'NZ-04', x: 6,   z: 22, w: 10, d: 8,  floors: 4, price: 13856, ulpin_3d: 'IN-AP-040B-FL02', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-4 (Person X)' },
-  { id: 'NZ-05', x: 20,  z: 22, w: 10, d: 8,  floors: 4, price: 13743, ulpin_3d: 'IN-AP-040B-FL02-B', owner: 'Person C (100%)', prevOwner: 'Person X', origOwner: 'Person Z', name: 'House Block Z-5' },
-  { id: 'NZ-06', x: 34,  z: 22, w: 9,  d: 8,  floors: 3, price: 11473, ulpin_3d: 'IN-AP-040B-FL01-D', owner: 'Person D (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'House Block Z-6' },
+  { id: 'NZ-01', x: -36, z: 22, w: 10, d: 8,  floors: 4, type: 'residential', ulpin_3d: 'IN-AP-040B-FL01', owner: 'Person Y (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'House Block Z-1' },
+  { id: 'NZ-02', x: -22, z: 22, w: 10, d: 8,  floors: 4, type: 'residential', ulpin_3d: 'IN-AP-040B-FL01-B', owner: 'Person A (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-2' },
+  { id: 'NZ-03', x: -8,  z: 22, w: 10, d: 8,  floors: 4, type: 'residential', ulpin_3d: 'IN-AP-040B-FL01-C', owner: 'Person B (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-3' },
+  { id: 'NZ-04', x: 6,   z: 22, w: 10, d: 8,  floors: 4, type: 'residential', ulpin_3d: 'IN-AP-040B-FL02', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-4 (Person X)' },
+  { id: 'NZ-05', x: 20,  z: 22, w: 10, d: 8,  floors: 4, type: 'residential', ulpin_3d: 'IN-AP-040B-FL02-B', owner: 'Person C (100%)', prevOwner: 'Person X', origOwner: 'Person Z', name: 'House Block Z-5' },
+  { id: 'NZ-06', x: 34,  z: 22, w: 9,  d: 8,  floors: 3, type: 'residential', ulpin_3d: 'IN-AP-040B-FL01-D', owner: 'Person D (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'House Block Z-6' },
 
-  { id: 'NZ-07', x: -36, z: 6,  w: 10, d: 9,  floors: 6, price: 13743, ulpin_3d: 'IN-AP-040B-FL03', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-7' },
-  { id: 'NZ-08', x: -22, z: 6,  w: 10, d: 9,  floors: 5, price: 14797, ulpin_3d: 'IN-AP-040B-FL03-B', owner: 'Person Y (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'Commercial Block Z-8' },
-  { id: 'NZ-09', x: -8,  z: 6,  w: 10, d: 9,  floors: 6, price: 14830, ulpin_3d: 'IN-AP-040B-FL03-C', owner: 'Person Z (100%)', prevOwner: 'Original', origOwner: 'Person Z', name: 'Commercial Block Z-9' },
-  { id: 'NZ-10', x: 6,   z: 6,  w: 10, d: 9,  floors: 6, price: 13756, ulpin_3d: 'IN-AP-040B-FL04', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-10' },
-  { id: 'NZ-11', x: 20,  z: 6,  w: 10, d: 9,  floors: 7, price: 13942, ulpin_3d: 'IN-AP-040B-FL04-B', owner: 'Person Y (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'House Block Z-11' },
-  { id: 'NZ-12', x: 34,  z: 6,  w: 9,  d: 9,  floors: 5, price: 13856, ulpin_3d: 'IN-AP-040B-FL02', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-12' },
+  { id: 'NZ-07', x: -36, z: 6,  w: 10, d: 9,  floors: 6, type: 'residential', ulpin_3d: 'IN-AP-040B-FL03', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-7' },
+  { id: 'NZ-08', x: -22, z: 6,  w: 10, d: 9,  floors: 5, type: 'commercial',  ulpin_3d: 'IN-AP-040B-FL03-B', owner: 'Person Y (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'Commercial Block Z-8' },
+  { id: 'NZ-09', x: -8,  z: 6,  w: 10, d: 9,  floors: 6, type: 'commercial',  ulpin_3d: 'IN-AP-040B-FL03-C', owner: 'Person Z (100%)', prevOwner: 'Original', origOwner: 'Person Z', name: 'Commercial Block Z-9' },
+  { id: 'NZ-10', x: 6,   z: 6,  w: 10, d: 9,  floors: 6, type: 'residential', ulpin_3d: 'IN-AP-040B-FL04', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-10' },
+  { id: 'NZ-11', x: 20,  z: 6,  w: 10, d: 9,  floors: 7, type: 'residential', ulpin_3d: 'IN-AP-040B-FL04-B', owner: 'Person Y (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'House Block Z-11' },
+  { id: 'NZ-12', x: 34,  z: 6,  w: 9,  d: 9,  floors: 5, type: 'residential', ulpin_3d: 'IN-AP-040B-FL02', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'House Block Z-12' },
 
-  { id: 'NZ-13', x: -32, z: -14, w: 12, d: 11, floors: 9,  price: 13743, ulpin_3d: 'IN-AP-040B-FL05', owner: 'Person Z (100%)', prevOwner: 'Original', origOwner: 'Person Z', name: 'Tower West' },
-  { id: 'NZ-14', x: -14, z: -14, w: 13, d: 11, floors: 12, price: 11455, ulpin_3d: 'IN-AP-040B-FL06', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'Green Tower 1' },
-  { id: 'NZ-15', x: 4,   z: -14, w: 13, d: 11, floors: 12, price: 11473, ulpin_3d: 'IN-AP-040B-FL06-B', owner: 'Person Y (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'Green Tower 2' },
-  { id: 'NZ-16', x: 22,  z: -14, w: 12, d: 11, floors: 10, price: 11314, ulpin_3d: 'IN-AP-040B-FL05-B', owner: 'Person Z (100%)', prevOwner: 'Original', origOwner: 'Person Z', name: 'Green Tower 3' }
+  { id: 'NZ-13', x: -32, z: -14, w: 12, d: 11, floors: 9,  type: 'mixed',       ulpin_3d: 'IN-AP-040B-FL05', owner: 'Person Z (100%)', prevOwner: 'Original', origOwner: 'Person Z', name: 'Tower West' },
+  { id: 'NZ-14', x: -14, z: -14, w: 13, d: 11, floors: 12, type: 'mixed',       ulpin_3d: 'IN-AP-040B-FL06', owner: 'Person X (100%)', prevOwner: 'Person Y', origOwner: 'Person Z', name: 'Green Tower 1' },
+  { id: 'NZ-15', x: 4,   z: -14, w: 13, d: 11, floors: 12, type: 'mixed',       ulpin_3d: 'IN-AP-040B-FL06-B', owner: 'Person Y (100%)', prevOwner: 'Person Z', origOwner: 'Person Z', name: 'Green Tower 2' },
+  { id: 'NZ-16', x: 22,  z: -14, w: 12, d: 11, floors: 10, type: 'mixed',       ulpin_3d: 'IN-AP-040B-FL05-B', owner: 'Person Z (100%)', prevOwner: 'Original', origOwner: 'Person Z', name: 'Green Tower 3' }
 ];
 
-// ── 3D VIEWER CLASS (GROUNDED & STABLE) ───────────────────────
+// ── THREE.JS ENGINE CLASS (HIGHLY INTERACTIVE & GROUNDED) ─────
 class ThreeCadastreViewer {
   constructor(containerId, isHeroMini = false) {
     this.container = document.getElementById(containerId);
@@ -188,7 +183,12 @@ class ThreeCadastreViewer {
     this.viewMode = 'storey';
     this.maxFloorsVisible = 12;
     this.autoRotate = false;
+    this.isExploded = false;
+    this.explodeFactor = 0; // 0 = normal, 1 = exploded
+    this.activeTypeFilter = 'all';
+    this.lightingMode = 'day'; // 'day' | 'sunset' | 'night'
     this.buildingMeshes = [];
+    this.hoveredObject = null;
 
     if (!this.container) return;
     this.initScene();
@@ -216,7 +216,7 @@ class ThreeCadastreViewer {
     if (typeof THREE.OrbitControls !== 'undefined') {
       this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
       this.controls.enableDamping = true;
-      this.controls.dampingFactor = 0.05;
+      this.controls.dampingFactor = 0.06;
       this.controls.maxPolarAngle = Math.PI / 2 - 0.05;
       this.controls.minDistance = 15;
       this.controls.maxDistance = 300;
@@ -228,7 +228,11 @@ class ThreeCadastreViewer {
 
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
+
+    // Interactive Listeners
     this.renderer.domElement.addEventListener('click', (e) => this.onCanvasClick(e));
+    this.renderer.domElement.addEventListener('mousemove', (e) => this.onCanvasMouseMove(e));
+    this.renderer.domElement.addEventListener('mouseleave', () => this.hideHoverTooltip());
 
     this.buildBuildings();
     this.animate();
@@ -237,19 +241,45 @@ class ThreeCadastreViewer {
   }
 
   setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0xdbeafe, 0.65);
-    this.scene.add(ambientLight);
+    this.ambientLight = new THREE.AmbientLight(0xdbeafe, 0.65);
+    this.scene.add(this.ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffffff, 0.95);
-    sunLight.position.set(60, 100, 45);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 2048;
-    sunLight.shadow.mapSize.height = 2048;
-    this.scene.add(sunLight);
+    this.sunLight = new THREE.DirectionalLight(0xffffff, 0.95);
+    this.sunLight.position.set(60, 100, 45);
+    this.sunLight.castShadow = true;
+    this.sunLight.shadow.mapSize.width = 2048;
+    this.sunLight.shadow.mapSize.height = 2048;
+    this.scene.add(this.sunLight);
 
-    const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.35);
-    fillLight.position.set(-60, 40, -40);
-    this.scene.add(fillLight);
+    this.fillLight = new THREE.DirectionalLight(0x38bdf8, 0.35);
+    this.fillLight.position.set(-60, 40, -40);
+    this.scene.add(this.fillLight);
+  }
+
+  setLightingMode(mode) {
+    this.lightingMode = mode;
+    if (mode === 'day') {
+      this.scene.background.setHex(0x080c16);
+      this.scene.fog.color.setHex(0x080c16);
+      this.ambientLight.color.setHex(0xdbeafe);
+      this.ambientLight.intensity = 0.65;
+      this.sunLight.color.setHex(0xffffff);
+      this.sunLight.intensity = 0.95;
+    } else if (mode === 'sunset') {
+      this.scene.background.setHex(0x181024);
+      this.scene.fog.color.setHex(0x181024);
+      this.ambientLight.color.setHex(0xfbbf24);
+      this.ambientLight.intensity = 0.55;
+      this.sunLight.color.setHex(0xf97316);
+      this.sunLight.intensity = 0.90;
+    } else if (mode === 'night') {
+      this.scene.background.setHex(0x03060d);
+      this.scene.fog.color.setHex(0x03060d);
+      this.ambientLight.color.setHex(0x38bdf8);
+      this.ambientLight.intensity = 0.35;
+      this.sunLight.color.setHex(0x60a5fa);
+      this.sunLight.intensity = 0.40;
+    }
   }
 
   buildGroundedTerrain() {
@@ -294,13 +324,17 @@ class ThreeCadastreViewer {
 
     const floorHeight = 2.4;
     const slabThick = 0.28;
+    const explodeGap = this.isExploded ? 1.2 : 0;
 
     NEIGHBOURHOOD_BUILDINGS.forEach(b => {
+      const isFiltered = (this.activeTypeFilter === 'all' || b.type === this.activeTypeFilter);
       const group = new THREE.Group();
       group.userData = { ...b };
 
-      const bColor = new THREE.Color(PRICE_PALETTE[b.price] || '#10b981');
+      const bColorHex = TYPE_PALETTE[b.type] || '#10b981';
+      const bColor = new THREE.Color(bColorHex);
 
+      // Anchored Concrete Footing (Grounded base)
       const footingPad = new THREE.Mesh(
         new THREE.BoxGeometry(b.w + 1.2, 0.6, b.d + 1.2),
         new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.9 })
@@ -315,7 +349,12 @@ class ThreeCadastreViewer {
         const totalH = b.floors * floorHeight;
         const solidMesh = new THREE.Mesh(
           new THREE.BoxGeometry(b.w, totalH, b.d),
-          new THREE.MeshStandardMaterial({ color: bColor, roughness: 0.35 })
+          new THREE.MeshStandardMaterial({
+            color: bColor,
+            roughness: 0.35,
+            transparent: !isFiltered,
+            opacity: isFiltered ? 0.95 : 0.25
+          })
         );
         solidMesh.position.set(0, 0.6 + totalH / 2, 0);
         solidMesh.castShadow = true;
@@ -325,7 +364,7 @@ class ThreeCadastreViewer {
 
         const edges = new THREE.LineSegments(
           new THREE.EdgesGeometry(solidMesh.geometry),
-          new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 })
+          new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: isFiltered ? 0.35 : 0.1 })
         );
         edges.position.copy(solidMesh.position);
         group.add(edges);
@@ -335,11 +374,16 @@ class ThreeCadastreViewer {
 
         for (let f = 0; f < visibleFloors; f++) {
           const floorGroup = new THREE.Group();
-          const floorBaseY = 0.6 + f * floorHeight;
+          const floorBaseY = 0.6 + f * (floorHeight + explodeGap);
 
           const slab = new THREE.Mesh(
             new THREE.BoxGeometry(b.w + 0.3, slabThick, b.d + 0.3),
-            new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.6 })
+            new THREE.MeshStandardMaterial({
+              color: 0x475569,
+              roughness: 0.6,
+              transparent: !isFiltered,
+              opacity: isFiltered ? 1.0 : 0.25
+            })
           );
           slab.position.set(0, floorBaseY + slabThick / 2, 0);
           slab.castShadow = true;
@@ -350,7 +394,12 @@ class ThreeCadastreViewer {
           const wallH = floorHeight - slabThick;
           const wall = new THREE.Mesh(
             new THREE.BoxGeometry(b.w, wallH, b.d),
-            new THREE.MeshStandardMaterial({ color: bColor, roughness: 0.45 })
+            new THREE.MeshStandardMaterial({
+              color: bColor,
+              roughness: 0.45,
+              transparent: !isFiltered,
+              opacity: isFiltered ? 0.85 : 0.2
+            })
           );
           wall.position.set(0, floorBaseY + slabThick + wallH / 2, 0);
           wall.castShadow = true;
@@ -362,10 +411,15 @@ class ThreeCadastreViewer {
         }
 
         if (visibleFloors === b.floors) {
-          const roofY = 0.6 + b.floors * floorHeight;
+          const roofY = 0.6 + b.floors * (floorHeight + explodeGap);
           const roof = new THREE.Mesh(
             new THREE.ConeGeometry(Math.max(b.w, b.d) * 0.72, 2.2, 4),
-            new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.5 })
+            new THREE.MeshStandardMaterial({
+              color: 0x991b1b,
+              roughness: 0.5,
+              transparent: !isFiltered,
+              opacity: isFiltered ? 1.0 : 0.25
+            })
           );
           roof.position.set(0, roofY + 1.1, 0);
           roof.rotation.y = Math.PI / 4;
@@ -381,6 +435,53 @@ class ThreeCadastreViewer {
     });
   }
 
+  onCanvasMouseMove(event) {
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+
+    let found = null;
+    for (let hit of intersects) {
+      if (hit.object && hit.object.userData && hit.object.userData.ulpin_3d) {
+        found = hit.object.userData;
+        break;
+      }
+    }
+
+    if (found) {
+      this.showHoverTooltip(found, event.clientX - rect.left, event.clientY - rect.top);
+    } else {
+      this.hideHoverTooltip();
+    }
+  }
+
+  showHoverTooltip(data, x, y) {
+    const ttId = this.isHeroMini ? 'dashHoverTooltip' : 'fullHoverTooltip';
+    const tt = document.getElementById(ttId);
+    if (!tt) return;
+
+    const idElem = document.getElementById(this.isHeroMini ? 'thtId' : 'fullThtId');
+    const ownerElem = document.getElementById(this.isHeroMini ? 'thtOwner' : 'fullThtOwner');
+    const typeElem = document.getElementById(this.isHeroMini ? 'thtType' : 'fullThtType');
+
+    if (idElem) idElem.textContent = data.ulpin_3d;
+    if (ownerElem) ownerElem.textContent = `Owner: ${data.owner.split(' ')[0]} ${data.owner.split(' ')[1] || ''}`;
+    if (typeElem) typeElem.textContent = `${data.type.toUpperCase()} • ${data.floor ? 'Floor ' + data.floor : 'Solid Unit'}`;
+
+    tt.style.left = `${x}px`;
+    tt.style.top = `${y}px`;
+    tt.style.display = 'block';
+  }
+
+  hideHoverTooltip() {
+    const ttId = this.isHeroMini ? 'dashHoverTooltip' : 'fullHoverTooltip';
+    const tt = document.getElementById(ttId);
+    if (tt) tt.style.display = 'none';
+  }
+
   onCanvasClick(event) {
     const rect = this.renderer.domElement.getBoundingClientRect();
     this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -392,12 +493,46 @@ class ThreeCadastreViewer {
     for (let hit of intersects) {
       if (hit.object && hit.object.userData && hit.object.userData.ulpin_3d) {
         updateAllPropertyDetails(hit.object.userData);
+        
+        // Highlight pulse effect
         const origColor = hit.object.material.color.clone();
         hit.object.material.color.set(0x38bdf8);
         setTimeout(() => hit.object.material.color.copy(origColor), 400);
+
+        // Smooth camera focus
+        this.flyToBuilding(hit.object.position.x + hit.object.parent.position.x, hit.object.position.z + hit.object.parent.position.z);
         break;
       }
     }
+  }
+
+  flyToBuilding(targetX, targetZ) {
+    if (!this.controls) return;
+    const startCam = this.camera.position.clone();
+    const endCam = new THREE.Vector3(targetX + 35, 30, targetZ + 35);
+    const startTarget = this.controls.target.clone();
+    const endTarget = new THREE.Vector3(targetX, 8, targetZ);
+
+    let progress = 0;
+    const anim = () => {
+      progress += 0.04;
+      if (progress <= 1) {
+        this.camera.position.lerpVectors(startCam, endCam, progress);
+        this.controls.target.lerpVectors(startTarget, endTarget, progress);
+        requestAnimationFrame(anim);
+      }
+    };
+    anim();
+  }
+
+  toggleExplode() {
+    this.isExploded = !this.isExploded;
+    this.buildBuildings();
+  }
+
+  setFilterType(type) {
+    this.activeTypeFilter = type;
+    this.buildBuildings();
   }
 
   setViewMode(mode) {
@@ -430,13 +565,16 @@ class ThreeCadastreViewer {
   }
 }
 
+// ── UPDATE UI PANELS (NO PLOT COSTS) ──────────────────────────
 function updateAllPropertyDetails(data) {
   const ulpin = data.ulpin_3d || 'IN-AP-040B-FL02';
   const owner = data.owner || 'Person X (100% Ownership)';
   const prevOwner = data.prevOwner || 'Person Y (Sold in 2019)';
   const origOwner = data.origOwner || 'Person Z (Original 1987 Owner)';
   const name = data.name || 'House Block Z-4';
+  const type = data.type || 'residential';
 
+  // Dashboard Dossier
   const dVal = document.getElementById('dashUlpinVal');
   const dBadge = document.getElementById('dashUlpinBadge');
   const dOwner = document.getElementById('dashOwnerVal');
@@ -449,18 +587,25 @@ function updateAllPropertyDetails(data) {
   if (dPrev) dPrev.textContent = prevOwner;
   if (dOrig) dOrig.textContent = origOwner;
 
+  // 3D Map Explorer
   const inspUlpin = document.getElementById('inspUlpin');
   const inspName = document.getElementById('inspName');
   const inspOwner = document.getElementById('inspOwner');
   const inspPrev = document.getElementById('inspPrevOwner');
   const inspOrig = document.getElementById('inspOrigOwner');
+  const inspType = document.getElementById('inspTypeBadge');
 
   if (inspUlpin) inspUlpin.textContent = ulpin;
   if (inspName) inspName.textContent = name;
   if (inspOwner) inspOwner.textContent = owner;
   if (inspPrev) inspPrev.textContent = prevOwner;
   if (inspOrig) inspOrig.textContent = origOwner;
+  if (inspType) {
+    inspType.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+    inspType.className = `badge badge-${type === 'residential' ? 'green' : type === 'commercial' ? 'blue' : 'yellow'}`;
+  }
 
+  // Legal Ledger
   const lUlpin = document.getElementById('lUlpin');
   const lOwner = document.getElementById('lOwner');
   const lName = document.getElementById('lName');
@@ -475,6 +620,55 @@ window.updateAllPropertyDetails = updateAllPropertyDetails;
 
 let dashEngine = null;
 let fullEngine = null;
+
+// Explode Floors Interactive Toggle
+function toggleExplodeFloors() {
+  if (dashEngine) dashEngine.toggleExplode();
+  if (fullEngine) fullEngine.toggleExplode();
+  const btn = document.getElementById('btnExplodeFloors');
+  const btnFull = document.getElementById('btnExplodeFull');
+  const active = dashEngine && dashEngine.isExploded;
+  if (btn) btn.style.borderColor = active ? '#06b6d4' : '';
+  if (btnFull) btnFull.innerHTML = active ? '<span>Collapse Floors</span>' : '<span>Explode Floor Slices</span>';
+}
+window.toggleExplodeFloors = toggleExplodeFloors;
+
+// Property Type Filter
+function filterByPropertyType(type) {
+  document.querySelectorAll('#dashTypeFilter .filter-pill').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.filter-chip-group .filter-btn').forEach(b => b.classList.remove('active'));
+  
+  if (event && event.target) event.target.classList.add('active');
+
+  if (dashEngine) dashEngine.setFilterType(type);
+  if (fullEngine) fullEngine.setFilterType(type);
+}
+window.filterByPropertyType = filterByPropertyType;
+
+// Interactive Lighting (Day / Sunset / Night)
+let currentLighting = 'day';
+function toggleLightingMode() {
+  const modes = ['day', 'sunset', 'night'];
+  const nextIdx = (modes.indexOf(currentLighting) + 1) % modes.length;
+  currentLighting = modes[nextIdx];
+
+  const icon = document.getElementById('lightingIcon');
+  const label = document.getElementById('lightingLabel');
+  if (currentLighting === 'day') {
+    if (icon) icon.textContent = '☀️';
+    if (label) label.textContent = 'Day View';
+  } else if (currentLighting === 'sunset') {
+    if (icon) icon.textContent = '🌅';
+    if (label) label.textContent = 'Sunset View';
+  } else {
+    if (icon) icon.textContent = '🌙';
+    if (label) label.textContent = 'Night View';
+  }
+
+  if (dashEngine) dashEngine.setLightingMode(currentLighting);
+  if (fullEngine) fullEngine.setLightingMode(currentLighting);
+}
+window.toggleLightingMode = toggleLightingMode;
 
 function setDashboardViewMode(mode) {
   document.querySelectorAll('#dashViewToggle .view-pill').forEach(p => p.classList.remove('active'));
@@ -580,6 +774,8 @@ function executeLedgerQuery() {
   const found = NEIGHBOURHOOD_BUILDINGS.find(b => b.ulpin_3d.toLowerCase().includes(query.toLowerCase()));
   if (found) {
     updateAllPropertyDetails(found);
+    if (dashEngine) dashEngine.flyToBuilding(found.x, found.z);
+    if (fullEngine) fullEngine.flyToBuilding(found.x, found.z);
   } else {
     updateAllPropertyDetails({
       ulpin_3d: query,
@@ -600,9 +796,17 @@ window.handleQuickUlpinSearch = handleQuickUlpinSearch;
 function lookupQuickUlpin() {
   const q = document.getElementById('globalSearch').value.trim();
   if (!q) return;
-  switchPage('ledger');
-  document.getElementById('ledgerQueryInput').value = q;
-  executeLedgerQuery();
+  
+  const found = NEIGHBOURHOOD_BUILDINGS.find(b => b.ulpin_3d.toLowerCase().includes(q.toLowerCase()));
+  if (found) {
+    updateAllPropertyDetails(found);
+    if (dashEngine) dashEngine.flyToBuilding(found.x, found.z);
+    if (fullEngine) fullEngine.flyToBuilding(found.x, found.z);
+  } else {
+    switchPage('ledger');
+    document.getElementById('ledgerQueryInput').value = q;
+    executeLedgerQuery();
+  }
 }
 window.lookupQuickUlpin = lookupQuickUlpin;
 
@@ -615,6 +819,5 @@ document.addEventListener('DOMContentLoaded', () => {
     fullEngine = new ThreeCadastreViewer('fullThreeCanvasContainer', false);
   }, 200);
 
-  // Initialize Default Role
   changeUserRole('citizen');
 });
