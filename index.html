@@ -7,10 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Three.js + OrbitControls + TWEEN for smooth camera animations -->
+  <!-- Three.js + OrbitControls -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -42,11 +41,11 @@
       <label class="role-selector-label">LOGGED IN AS:</label>
       <div class="role-select-box">
         <select id="sidebarRoleSelect" class="role-dropdown" onchange="changeUserRole(this.value)">
-          <option value="citizen" selected>👤 Citizen / Owner (Person X)</option>
-          <option value="advocate">⚖️ Advocate / Legal Counsel</option>
-          <option value="employee">🏛️ Govt. Employee / Tahsildar</option>
-          <option value="surveyor">📐 Surveyor / Engineer</option>
-          <option value="bank">🏦 Bank / Loan Officer</option>
+          <option value="citizen" selected>👤 Citizen (Person X)</option>
+          <option value="advocate">⚖️ Advocate (Legal Counsel)</option>
+          <option value="employee">🏛️ Govt. Employee (Tahsildar)</option>
+          <option value="surveyor">📐 Surveyor (Cadastral Engineer)</option>
+          <option value="bank">🏦 Bank (Loan Officer)</option>
         </select>
       </div>
     </div>
@@ -97,14 +96,7 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="bim-compliance-badge">
-        <div class="pulse-indicator"></div>
-        <div>
-          <div class="comp-title">Official Land Registry</div>
-          <div class="comp-sub">Verified & Safe to Use</div>
-        </div>
-      </div>
-      <div class="user-card" style="margin-top: 10px;">
+      <div class="user-card">
         <div class="user-avatar" id="footerAvatar">PX</div>
         <div class="user-info">
           <span class="user-name" id="footerUserName">Person X</span>
@@ -139,11 +131,11 @@
           <span class="rsp-icon">🎭</span>
           <span class="rsp-label">Switch View:</span>
           <select id="topbarRoleSelect" class="topbar-role-dropdown" onchange="changeUserRole(this.value)">
-            <option value="citizen" selected>👤 Citizen / Owner (Person X)</option>
-            <option value="advocate">⚖️ Advocate / Legal Counsel</option>
-            <option value="employee">🏛️ Govt. Employee / Tahsildar</option>
-            <option value="surveyor">📐 Surveyor / Engineer</option>
-            <option value="bank">🏦 Bank / Loan Officer</option>
+            <option value="citizen" selected>👤 Citizen (Person X)</option>
+            <option value="advocate">⚖️ Advocate (Legal Counsel)</option>
+            <option value="employee">🏛️ Govt. Employee (Tahsildar)</option>
+            <option value="surveyor">📐 Surveyor (Cadastral Engineer)</option>
+            <option value="bank">🏦 Bank (Loan Officer)</option>
           </select>
         </div>
       </div>
@@ -157,7 +149,7 @@
         <!-- Quick Property Search -->
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" id="globalSearch" placeholder="Search Property ID (e.g. IN-AP-040B)..." onkeypress="handleQuickUlpinSearch(event)" />
+          <input type="text" id="globalSearch" placeholder="Search Property ID (e.g. IN-AP-040B-FL02)..." onkeypress="handleQuickUlpinSearch(event)" />
         </div>
         <button class="btn btn-sm btn-primary" onclick="lookupQuickUlpin()">
           Search & Fly To
@@ -165,16 +157,18 @@
       </div>
     </header>
 
-    <!-- ROLE WELCOME BANNER -->
+    <!-- ROLE WELCOME BANNER (Dynamically updates per role) -->
     <div class="role-banner" id="roleBanner">
       <div class="role-banner-content">
         <div class="rb-icon" id="rbIcon">👤</div>
         <div>
           <h3 class="rb-title" id="rbTitle">Welcome, Person X (Citizen Mode)</h3>
-          <p class="rb-desc" id="rbDesc">You can check your property ownership, view 3D house boundaries, see bank loan status, and apply to transfer property names.</p>
+          <p class="rb-desc" id="rbDesc">You can check your property ownership, view 3D house boundaries, see your bank loan status, and apply to transfer property names.</p>
         </div>
       </div>
-      <div class="rb-badge" id="rbBadge">Citizen Access</div>
+      <div class="role-action-wrapper" id="roleActionContainer">
+        <button class="btn btn-sm btn-primary" id="btnRolePrimaryAction" onclick="executeRoleAction()">Apply For Transfer</button>
+      </div>
     </div>
 
     <!-- ══════════ PAGE 1: DASHBOARD ══════════ -->
@@ -182,7 +176,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Digital Land & 3D Property Portal</h1>
-          <p class="page-subtitle">Simple, transparent property records. Click and explore 3D buildings, verify ownership, and inspect floor units.</p>
+          <p class="page-subtitle">Simple, transparent property records. Click individual floor slabs to see unique 3D-ULPIN IDs, owner names, and personalized loan records.</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-outline" onclick="switchPage('generator')">
@@ -208,17 +202,17 @@
         </div>
         <div class="guide-card">
           <div class="guide-num">3</div>
-          <div class="guide-title">Digital Property ID</div>
-          <div class="guide-desc">Gives every floor & flat a unique 3D-ULPIN ID.</div>
+          <div class="guide-title">Floor 3D-ULPIN</div>
+          <div class="guide-desc">Unique 3D-ULPIN ID created specifically for each floor.</div>
         </div>
         <div class="guide-card">
           <div class="guide-num">4</div>
-          <div class="guide-title">Ownership Ledger</div>
-          <div class="guide-desc">Shows who owns the house and if any bank loan exists.</div>
+          <div class="guide-title">Ownership & Loans</div>
+          <div class="guide-desc">Shows individual owner and customized bank loan records.</div>
         </div>
       </div>
 
-      <!-- STATS ROW IN SIMPLE WORDS (NO PRICES) -->
+      <!-- STATS ROW -->
       <div class="stats-grid" style="margin-top: 18px;">
         <div class="stat-card" style="--accent:#6366f1">
           <div class="stat-icon" style="background:rgba(99,102,241,0.15)">
@@ -237,7 +231,7 @@
           <div class="stat-body">
             <span class="stat-label">Verified Owners</span>
             <span class="stat-value font-mono">98,432</span>
-            <span class="stat-change up">Clear legal titles</span>
+            <span class="stat-change up">Person A to Person Z</span>
           </div>
         </div>
         <div class="stat-card" style="--accent:#10b981">
@@ -245,9 +239,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg>
           </div>
           <div class="stat-body">
-            <span class="stat-label">Solid Foundations</span>
-            <span class="stat-value font-mono">100%</span>
-            <span class="stat-change up">Firmly grounded</span>
+            <span class="stat-label">Floor Units Mapped</span>
+            <span class="stat-value font-mono">3,48,190</span>
+            <span class="stat-change up">Floor-by-floor 3D-ULPIN</span>
           </div>
         </div>
         <div class="stat-card" style="--accent:#f59e0b">
@@ -265,9 +259,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/></svg>
           </div>
           <div class="stat-body">
-            <span class="stat-label">Security Shield</span>
-            <span class="stat-value font-mono">Active</span>
-            <span class="stat-change up">Safe & Encrypted</span>
+            <span class="stat-label">Active Bank Mortgages</span>
+            <span class="stat-value font-mono">41,208</span>
+            <span class="stat-change up">Unique per property</span>
           </div>
         </div>
       </div>
@@ -278,7 +272,7 @@
           <div class="card-header">
             <div class="card-header-left">
               <span class="card-title">Interactive 3D Neighbourhood View</span>
-              <span class="badge badge-green" style="margin-left:10px">Hover & Click any house</span>
+              <span class="badge badge-green" style="margin-left:10px">Click any floor slab to inspect</span>
             </div>
             <div class="card-actions">
               <!-- Interactive Type Filter Pills -->
@@ -304,28 +298,21 @@
             <div class="three-hover-tooltip" id="dashHoverTooltip">
               <div class="tht-id font-mono" id="thtId">IN-AP-040B-FL02</div>
               <div class="tht-owner" id="thtOwner">Owner: Person X</div>
-              <div class="tht-type" id="thtType">Residential • Freehold</div>
+              <div class="tht-floor text-cyan" id="thtFloor">Floor 2 (Flat 201)</div>
+              <div class="tht-loan text-yellow" id="thtLoan">Bank Loan: ₹28,50,000</div>
             </div>
 
-            <!-- Property Type Legend (Replaced Price Legend) -->
+            <!-- Property Type Legend -->
             <div class="map-legend">
               <div class="legend-header">
-                <span class="legend-title">Property Types</span>
-                <span class="legend-sub">Land Use & Classification</span>
+                <span class="legend-title">Property Classification</span>
               </div>
               <div class="legend-items">
                 <div class="legend-item"><span class="legend-color" style="background:#10b981"></span>Residential Houses</div>
                 <div class="legend-item"><span class="legend-color" style="background:#06b6d4"></span>High-Rise Apartments</div>
                 <div class="legend-item"><span class="legend-color" style="background:#6366f1"></span>Commercial / Retail</div>
                 <div class="legend-item"><span class="legend-color" style="background:#f59e0b"></span>Mixed-Use Towers</div>
-                <div class="legend-item"><span class="legend-color" style="background:#ec4899"></span>Public Domain / Annex</div>
               </div>
-            </div>
-
-            <!-- Grounding Notice -->
-            <div class="grounding-badge">
-              <span class="gb-icon">⚓</span>
-              <span>All buildings sit firmly on real ground foundations (Zero floating).</span>
             </div>
 
             <div class="map-controls">
@@ -338,21 +325,21 @@
           </div>
         </div>
 
-        <!-- SELECTED PROPERTY SUMMARY (Person X, Person Y, Person Z) -->
+        <!-- SELECTED PROPERTY SUMMARY (Dynamic Per Floor & Per Person) -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Selected House Record</span>
+            <span class="card-title">Selected Unit Details</span>
             <span class="badge badge-green font-mono" id="dashUlpinBadge">ID: IN-AP-040B-FL02</span>
           </div>
           <div class="ulpin-hero-dossier" id="dashUlpinDossier">
             <div class="dossier-grid">
               <div class="dossier-item">
-                <label>Unique Property ID (3D-ULPIN)</label>
+                <label>Floor-Specific 3D-ULPIN</label>
                 <strong class="mono text-cyan" id="dashUlpinVal">IN-AP-040B-FL02</strong>
               </div>
               <div class="dossier-item">
-                <label>House Name / Unit</label>
-                <span id="dashSurveyVal">House Block Z-4 (Floor 2, Flat 201)</span>
+                <label>Floor Level & Unit</label>
+                <strong class="text-primary font-bold" id="dashFloorLevelVal">Floor 2 (Flat 201)</strong>
               </div>
               <div class="dossier-item">
                 <label>Current Legal Owner</label>
@@ -367,22 +354,33 @@
                 <span id="dashOrigOwnerVal">Person Z (Original 1987 Owner)</span>
               </div>
               <div class="dossier-item">
-                <label>Bank Loan Status</label>
-                <span class="badge badge-yellow" id="dashMortgageVal">Active Home Loan (₹35,00,000)</span>
+                <label>Personalized Bank Loan</label>
+                <span class="badge badge-yellow" id="dashMortgageVal">State Bank Loan: ₹28,50,000</span>
               </div>
               <div class="dossier-item">
                 <label>Municipal Tax Status</label>
                 <span class="text-green">● Paid & Up to date</span>
               </div>
               <div class="dossier-item">
-                <label>Foundation Base</label>
-                <span class="text-green">● Solid Ground (+47.3m)</span>
+                <label>Property Classification</label>
+                <span class="badge badge-green" id="dashTypeBadge">Residential Freehold</span>
               </div>
             </div>
-            <button class="btn btn-primary" style="width:100%;margin-top:14px;" onclick="openFullLegalDossier()">
-              <span>View Full Ownership Paperwork & History</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </button>
+
+            <!-- Role Restricted Action Buttons -->
+            <div class="dossier-action-bar" style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">
+              <button class="btn btn-primary" style="width:100%;" onclick="openFullLegalDossier()">
+                <span>View Full Ownership Paperwork & History</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+
+              <!-- Role Context Buttons -->
+              <div class="role-context-actions" id="dashRoleActionArea">
+                <button class="btn btn-outline btn-sm" style="width:100%;" onclick="executeRoleSpecificAction('advocate')">
+                  ⚖️ Generate Legal Due Diligence Report
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -396,7 +394,7 @@
             <div class="activity-item">
               <div class="activity-icon bg-indigo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg></div>
               <div class="activity-body">
-                <p class="activity-text"><strong>Sale Transfer Complete</strong>: <strong>Person Y</strong> transferred house title to <strong>Person X</strong></p>
+                <p class="activity-text"><strong>Sale Transfer Complete</strong>: <strong>Person Y</strong> transferred Floor 2 title to <strong>Person X</strong></p>
                 <span class="activity-time">Property ID: <code>IN-AP-040B-FL02</code> · Verified by Officer</span>
               </div>
               <span class="badge badge-green">Approved</span>
@@ -404,16 +402,16 @@
             <div class="activity-item">
               <div class="activity-icon bg-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg></div>
               <div class="activity-body">
-                <p class="activity-text"><strong>Boundary Verified</strong>: No overlap with neighbours</p>
-                <span class="activity-time">Floor boundaries checked in 3D</span>
+                <p class="activity-text"><strong>Inheritance Transfer</strong>: <strong>Person D</strong> registered Floor 1 from <strong>Person Z</strong></p>
+                <span class="activity-time">Property ID: <code>IN-AP-040B-FL01-D</code> · NOC Clear</span>
               </div>
               <span class="badge badge-blue">Verified</span>
             </div>
             <div class="activity-item">
               <div class="activity-icon bg-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/></svg></div>
               <div class="activity-body">
-                <p class="activity-text"><strong>Bank Loan Registered</strong>: State Bank home loan linked</p>
-                <span class="activity-time">Owner: <strong>Person X</strong></span>
+                <p class="activity-text"><strong>Commercial Mortgage</strong>: <strong>Person B</strong> linked ICICI loan (₹75,00,000)</p>
+                <span class="activity-time">Commercial Block Z-3 · Floor 1</span>
               </div>
               <span class="badge badge-yellow">Loan Active</span>
             </div>
@@ -427,7 +425,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">3D Interactive Property Map</h1>
-          <p class="page-subtitle">Click and hover any building or floor to see who owns it, inspect floor boundaries, and explode building slices.</p>
+          <p class="page-subtitle">Click and hover individual floor slabs to see how 3D-ULPIN, owner, and loan status change dynamically floor to floor.</p>
         </div>
         <div class="header-actions">
           <button class="btn btn-outline" onclick="toggleExplodeFloors()" id="btnExplodeFull">
@@ -442,7 +440,7 @@
         <div class="map3d-sidebar">
 
           <div class="filter-group">
-            <label>Interactive Filter by Type</label>
+            <label>Filter by Property Type</label>
             <div class="filter-chip-group">
               <button class="filter-btn active" onclick="filterByPropertyType('all')">All</button>
               <button class="filter-btn" onclick="filterByPropertyType('residential')">Residential</button>
@@ -458,7 +456,7 @@
                 <span class="mode-icon">🏢</span>
                 <div>
                   <div class="mode-title">Floor by Floor</div>
-                  <div class="mode-desc">See each flat separately</div>
+                  <div class="mode-desc">See each floor's unique 3D-ULPIN</div>
                 </div>
               </button>
               <button class="btn-mode" id="btnModeSolid" onclick="setFullViewMode('solid')">
@@ -468,19 +466,6 @@
                   <div class="mode-desc">See the full building block</div>
                 </div>
               </button>
-            </div>
-          </div>
-
-          <!-- Stability Box -->
-          <div class="filter-group highlight-box">
-            <div class="stability-header">
-              <span class="sh-icon">⚓</span>
-              <span class="sh-title">Foundation & Ground Check</span>
-            </div>
-            <div class="stability-metrics">
-              <div class="sm-row"><span>Ground Status:</span><strong class="text-green">Built on Real Soil (Grounded)</strong></div>
-              <div class="sm-row"><span>Floating Buildings:</span><strong>Zero (None)</strong></div>
-              <div class="sm-row"><span>Foundation Anchor:</span><span>Solid Concrete Base</span></div>
             </div>
           </div>
 
@@ -498,14 +483,14 @@
             </div>
           </div>
 
-          <!-- Inspector -->
+          <!-- Inspector (Changes Floor to Floor) -->
           <div class="parcel-info-box" id="inspectorBox">
-            <div class="info-title">Selected Property Details</div>
-            <div class="info-row"><span>Property ID:</span><strong class="mono text-cyan" id="inspUlpin">IN-AP-040B-FL02</strong></div>
-            <div class="info-row"><span>Building:</span><strong id="inspName">Block Z-4</strong></div>
+            <div class="info-title">Floor Unit Details</div>
+            <div class="info-row"><span>Floor 3D-ULPIN:</span><strong class="mono text-cyan" id="inspUlpin">IN-AP-040B-FL02</strong></div>
+            <div class="info-row"><span>Floor Level:</span><strong id="inspFloorLevel">Floor 2 (Flat 201)</strong></div>
             <div class="info-row"><span>Owner Name:</span><strong class="text-green" id="inspOwner">Person X</strong></div>
             <div class="info-row"><span>Seller / Prev:</span><span id="inspPrevOwner">Person Y</span></div>
-            <div class="info-row"><span>Original Allotment:</span><span id="inspOrigOwner">Person Z</span></div>
+            <div class="info-row"><span>Bank Mortgage:</span><span class="badge badge-yellow" id="inspLoanBadge">State Bank: ₹28,50,000</span></div>
             <div class="info-row"><span>Property Type:</span><span class="badge badge-green" id="inspTypeBadge">Residential</span></div>
             <button class="btn btn-primary" style="width:100%;margin-top:10px;font-size:12px;" onclick="switchPage('ledger')">
               <span>Check Full Paperwork & Deeds</span>
@@ -523,7 +508,8 @@
           <div class="three-hover-tooltip" id="fullHoverTooltip">
             <div class="tht-id font-mono" id="fullThtId">IN-AP-040B-FL02</div>
             <div class="tht-owner" id="fullThtOwner">Owner: Person X</div>
-            <div class="tht-type" id="fullThtType">Residential • Freehold</div>
+            <div class="tht-floor text-cyan" id="fullThtFloor">Floor 2 (Flat 201)</div>
+            <div class="tht-loan text-yellow" id="fullThtLoan">Bank Loan: ₹28,50,000</div>
           </div>
 
           <div class="viewport-hud-top">
@@ -532,19 +518,17 @@
               <span id="activeModelLabel">Neighbourhood 3D Cadastre</span>
             </div>
             <div class="hud-chip">
-              <span>Ground: <strong>Solid Foundation (+47.3m)</strong></span>
+              <span>Current Role: <strong id="hudRoleName">Citizen (Person X)</strong></span>
             </div>
           </div>
 
-          <!-- Type Legend (No Prices) -->
           <div class="map-overlay-legend" id="fullLegendBox">
-            <div class="legend-title" id="legendTitle">Land Use & Property Classification</div>
+            <div class="legend-title" id="legendTitle">Land Use & Classification</div>
             <div class="legend-grid-horizontal" id="legendGrid">
               <div class="l-chip"><span style="background:#10b981"></span>Residential</div>
-              <div class="l-chip"><span style="background:#06b6d4"></span>High-Rise Apartments</div>
-              <div class="l-chip"><span style="background:#6366f1"></span>Commercial / Retail</div>
-              <div class="l-chip"><span style="background:#f59e0b"></span>Mixed-Use Towers</div>
-              <div class="l-chip"><span style="background:#ec4899"></span>Public Domain</div>
+              <div class="l-chip"><span style="background:#06b6d4"></span>Apartments</div>
+              <div class="l-chip"><span style="background:#6366f1"></span>Commercial</div>
+              <div class="l-chip"><span style="background:#f59e0b"></span>Mixed Towers</div>
             </div>
           </div>
 
@@ -564,7 +548,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Generate a New Digital Property ID</h1>
-          <p class="page-subtitle">Creates an official, tamper-proof ID for your land, building, or specific apartment floor.</p>
+          <p class="page-subtitle">Creates an official, floor-specific 3D-ULPIN ID for your land, building, or specific apartment floor.</p>
         </div>
       </div>
 
@@ -581,7 +565,7 @@
                 <input type="text" class="input-field" id="genState" value="Andhra Pradesh, Vijayawada" />
               </div>
               <div class="form-group">
-                <label>Locality / Village</label>
+                <label>Locality / Sector</label>
                 <input type="text" class="input-field" id="genMandal" value="Kondapalli Sector" />
               </div>
               <div class="form-group">
@@ -589,28 +573,38 @@
                 <input type="text" class="input-field" id="genSurvey" value="Plot 40B / House 112" />
               </div>
               <div class="form-group">
-                <label>Floor / Unit</label>
-                <select class="select-full" id="genFloor">
-                  <option value="FL00">Ground Floor (Base)</option>
-                  <option value="FL01">Floor 1 (Flat 101)</option>
-                  <option value="FL02" selected>Floor 2 (Flat 201)</option>
-                  <option value="FL03">Floor 3 (Flat 301)</option>
-                  <option value="FL04">Floor 4 (Penthouse)</option>
+                <label>Floor / Unit (Changes 3D-ULPIN)</label>
+                <select class="select-full" id="genFloor" onchange="previewFloorUlpin(this.value)">
+                  <option value="FL00">Ground Floor (Base) ➔ IN-AP-040B-FL00</option>
+                  <option value="FL01">Floor 1 (Flat 101) ➔ IN-AP-040B-FL01</option>
+                  <option value="FL02" selected>Floor 2 (Flat 201) ➔ IN-AP-040B-FL02</option>
+                  <option value="FL03">Floor 3 (Flat 301) ➔ IN-AP-040B-FL03</option>
+                  <option value="FL04">Floor 4 (Penthouse) ➔ IN-AP-040B-FL04</option>
+                  <option value="FL05">Floor 5 (Tower Unit) ➔ IN-AP-040B-FL05</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>Current Owner</label>
-                <input type="text" class="input-field" id="genOwnerName" value="Person X" />
+                <label>Owner Name</label>
+                <select class="select-full" id="genOwnerName">
+                  <option value="Person X">Person X</option>
+                  <option value="Person A">Person A</option>
+                  <option value="Person B">Person B</option>
+                  <option value="Person C">Person C</option>
+                  <option value="Person D">Person D</option>
+                  <option value="Person E">Person E</option>
+                  <option value="Person F">Person F</option>
+                  <option value="Person G">Person G</option>
+                </select>
               </div>
               <div class="form-group">
-                <label>Previous Owner</label>
-                <input type="text" class="input-field" id="genPrevOwnerName" value="Person Y" />
+                <label>Personalized Bank Loan</label>
+                <input type="text" class="input-field" id="genLoanAmount" value="Home Loan ₹28,50,000 (State Bank)" />
               </div>
             </div>
 
             <div class="form-actions" style="margin-top: 18px;">
               <button type="submit" class="btn btn-primary" style="width:100%;">
-                Generate Official Property ID Now
+                Generate Floor-Specific Property ID Now
               </button>
             </div>
           </form>
@@ -618,21 +612,21 @@
 
         <div class="card" id="genOutputCard">
           <div class="card-header">
-            <span class="card-title">Your Generated Property ID</span>
+            <span class="card-title">Generated Floor 3D-ULPIN</span>
             <span class="badge badge-green" id="genStatusBadge">Generated Successfully</span>
           </div>
 
           <div class="gen-output-box">
             <div class="output-row-hero">
-              <label>Official Digital ID (3D-ULPIN)</label>
+              <label>Official Floor 3D-ULPIN</label>
               <div class="ulpin-hero-text font-mono" id="mintedUlpin">IN-AP-040B-FL02</div>
             </div>
 
             <div class="output-details-grid">
               <div class="od-item"><label>Registered Owner</label><strong id="mintedOwner">Person X</strong></div>
-              <div class="od-item"><label>Boundary Check</label><span class="badge badge-green">Passed (No overlaps)</span></div>
-              <div class="od-item"><label>Foundation Base</label><span class="text-green">Solid Concrete Footing</span></div>
-              <div class="od-item"><label>Legal Status</label><span class="text-green font-bold">Clear Freehold Title</span></div>
+              <div class="od-item"><label>Floor Level</label><span class="text-cyan font-bold" id="mintedFloorLevel">Floor 2 (Flat 201)</span></div>
+              <div class="od-item"><label>Bank Loan</label><span class="text-yellow" id="mintedLoan">Home Loan ₹28,50,000</span></div>
+              <div class="od-item"><label>Legal Title</label><span class="text-green font-bold">Clear Freehold Title</span></div>
             </div>
 
             <div class="gen-next-actions" style="margin-top: 16px; display: flex; gap: 8px;">
@@ -649,7 +643,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Check Ownership & Loan Records</h1>
-          <p class="page-subtitle">Verify who truly owns any property, see previous ownership history, and check if any bank loans exist.</p>
+          <p class="page-subtitle">Verify who truly owns each floor unit, inspect previous ownership history, and check unique bank loans.</p>
         </div>
       </div>
 
@@ -669,20 +663,20 @@
             </div>
 
             <div class="record-tabs">
-              <button class="tab-btn active" onclick="switchTab(this, 'tab-baunit')">Property & Owner</button>
-              <button class="tab-btn" onclick="switchTab(this, 'tab-rrr')">Bank Loans & Taxes</button>
+              <button class="tab-btn active" onclick="switchTab(this, 'tab-baunit')">Floor Unit & Owner</button>
+              <button class="tab-btn" onclick="switchTab(this, 'tab-rrr')">Personalized Bank Loans</button>
               <button class="tab-btn" onclick="switchTab(this, 'tab-docs')">Official Documents</button>
             </div>
 
             <div class="tab-content active" id="tab-baunit">
               <div class="record-section">
                 <div class="record-grid">
-                  <div class="record-field"><label>Property ID</label><span class="mono text-cyan font-bold" id="lUlpin">IN-AP-040B-FL02</span></div>
+                  <div class="record-field"><label>Floor 3D-ULPIN</label><span class="mono text-cyan font-bold" id="lUlpin">IN-AP-040B-FL02</span></div>
                   <div class="record-field"><label>Current Owner</label><strong class="text-green font-bold" id="lOwner">Person X (100% Title)</strong></div>
-                  <div class="record-field"><label>Building / Flat</label><span id="lName">Block Z-4, Floor 2, Flat 201</span></div>
+                  <div class="record-field"><label>Floor Level</label><strong class="text-cyan" id="lFloorLevel">Floor 2 (Flat 201)</strong></div>
+                  <div class="record-field"><label>Building Name</label><span id="lName">House Block Z-4</span></div>
                   <div class="record-field"><label>Location</label><span>Vijayawada, NTR District</span></div>
                   <div class="record-field"><label>Property Type</label><span class="badge badge-green">Residential Freehold</span></div>
-                  <div class="record-field"><label>Foundation Grounding</label><span class="text-green">Built on Solid Ground (+47.3m)</span></div>
                 </div>
               </div>
             </div>
@@ -692,18 +686,18 @@
                 <div class="rrr-item">
                   <div class="rrr-type ownership">Ownership</div>
                   <div class="rrr-details">
-                    <div class="rrr-party">Person X (100% Full Owner)</div>
+                    <div class="rrr-party" id="lRrrOwner">Person X (100% Full Owner)</div>
                     <div class="rrr-meta">Registered Sale Deed 2019 · Valid & Complete</div>
                   </div>
                   <span class="badge badge-green">Verified</span>
                 </div>
                 <div class="rrr-item">
-                  <div class="rrr-type restriction">Bank Loan</div>
+                  <div class="rrr-type restriction">Personalized Loan</div>
                   <div class="rrr-details">
-                    <div class="rrr-party">Home Loan — ₹35,00,000</div>
-                    <div class="rrr-meta">State Bank · Repayment in progress until 2034</div>
+                    <div class="rrr-party" id="lRrrLoan">State Bank Home Loan — ₹28,50,000</div>
+                    <div class="rrr-meta">Account #SB-9847291 · Repayment in progress until 2034</div>
                   </div>
-                  <span class="badge badge-yellow">Loan Active</span>
+                  <span class="badge badge-yellow" id="lRrrLoanBadge">Loan Active</span>
                 </div>
                 <div class="rrr-item">
                   <div class="rrr-type responsibility">Property Tax</div>
@@ -721,16 +715,16 @@
                 <div class="doc-item">
                   <div class="doc-icon">📜</div>
                   <div class="doc-info">
-                    <span class="doc-name">Registered Sale Deed (2019)</span>
-                    <span class="doc-meta">Transferred from Person Y to Person X</span>
+                    <span class="doc-name">Registered Floor Sale Deed</span>
+                    <span class="doc-meta" id="lDocDeedMeta">Transferred from Person Y to Person X</span>
                   </div>
                   <button class="btn-sm btn-outline">View Summary</button>
                 </div>
                 <div class="doc-item">
                   <div class="doc-icon">📐</div>
                   <div class="doc-info">
-                    <span class="doc-name">Digital 3D Map Plan</span>
-                    <span class="doc-meta">Boundary dimensions and height coordinates</span>
+                    <span class="doc-name">Digital 3D Floor Boundary Plan</span>
+                    <span class="doc-meta">Height boundary and volumetric spatial unit</span>
                   </div>
                   <button class="btn-sm btn-outline" onclick="switchPage('map3d')">Open in 3D</button>
                 </div>
@@ -738,14 +732,14 @@
             </div>
           </div>
 
-          <!-- Chain of Ownership Card (Person X, Person Y, Person Z) with clean flow cards -->
+          <!-- Chain of Ownership Card -->
           <div class="card">
-            <div class="card-header"><span class="card-title">Ownership History (Who owned it before?)</span></div>
+            <div class="card-header"><span class="card-title">Ownership History (Chain of Title)</span></div>
             <div class="ownership-chain">
               <div class="owner-node current">
-                <div class="owner-avatar">PX</div>
+                <div class="owner-avatar" id="chainAvatar1">PX</div>
                 <div class="owner-info">
-                  <span class="owner-name">Person X</span>
+                  <span class="owner-name" id="chainName1">Person X</span>
                   <span class="owner-since">2019 – Present (Current Owner)</span>
                   <span class="owner-share">Purchased with registered sale deed</span>
                 </div>
@@ -755,9 +749,9 @@
                 <span class="connector-badge">Bought From (Sale Deed 2019)</span>
               </div>
               <div class="owner-node">
-                <div class="owner-avatar">PY</div>
+                <div class="owner-avatar" id="chainAvatar2">PY</div>
                 <div class="owner-info">
-                  <span class="owner-name">Person Y</span>
+                  <span class="owner-name" id="chainName2">Person Y</span>
                   <span class="owner-since">2011 – 2019 (Previous Owner)</span>
                   <span class="owner-share">Held clear title for 8 years</span>
                 </div>
@@ -767,9 +761,9 @@
                 <span class="connector-badge">Inherited From (Allotment 2011)</span>
               </div>
               <div class="owner-node">
-                <div class="owner-avatar">PZ</div>
+                <div class="owner-avatar" id="chainAvatar3">PZ</div>
                 <div class="owner-info">
-                  <span class="owner-name">Person Z</span>
+                  <span class="owner-name" id="chainName3">Person Z</span>
                   <span class="owner-since">1987 – 2011 (Original Owner)</span>
                   <span class="owner-share">Original property allotment</span>
                 </div>
@@ -780,44 +774,21 @@
       </div>
     </div>
 
-    <!-- ══════════ PAGE 5: CITIZEN OWNERS LIST ══════════ -->
+    <!-- ══════════ PAGE 5: CITIZEN OWNERS LIST (Person A to Person Z) ══════════ -->
     <div class="page" id="page-ownership">
       <div class="page-header">
         <div>
-          <h1 class="page-title">Registered Property Owners</h1>
-          <p class="page-subtitle">Directory of registered citizens and their property holdings.</p>
+          <h1 class="page-title">Registered Property Owners (Person Roster)</h1>
+          <p class="page-subtitle">Directory of registered citizens from Person A to Person Z with individual floor units and personalized loan statuses.</p>
         </div>
       </div>
       <div class="card">
         <table class="data-table">
           <thead>
-            <tr><th>Citizen ID</th><th>Owner Name</th><th>Property ID</th><th>Property Size</th><th>Type</th><th>Status</th><th>Actions</th></tr>
+            <tr><th>Citizen ID</th><th>Owner Name</th><th>Floor 3D-ULPIN</th><th>Floor Level</th><th>Property Size</th><th>Personalized Bank Loan</th><th>Status</th><th>Actions</th></tr>
           </thead>
-          <tbody>
-            <tr>
-              <td class="mono">CIT-001</td>
-              <td><div class="owner-cell"><div class="mini-avatar">PX</div>Person X</div></td>
-              <td class="mono text-cyan">IN-AP-040B-FL02</td><td>180 m²</td>
-              <td><span class="badge badge-green">Residential</span></td>
-              <td><span class="badge badge-green">Verified Owner</span></td>
-              <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View Records</button></td>
-            </tr>
-            <tr>
-              <td class="mono">CIT-002</td>
-              <td><div class="owner-cell"><div class="mini-avatar">PY</div>Person Y</div></td>
-              <td class="mono text-cyan">IN-AP-040B-FL01</td><td>220 m²</td>
-              <td><span class="badge badge-green">Residential</span></td>
-              <td><span class="badge badge-green">Verified Owner</span></td>
-              <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View Records</button></td>
-            </tr>
-            <tr>
-              <td class="mono">CIT-003</td>
-              <td><div class="owner-cell"><div class="mini-avatar">PZ</div>Person Z</div></td>
-              <td class="mono text-cyan">IN-AP-040B-FL04</td><td>350 m²</td>
-              <td><span class="badge badge-blue">Mixed-Use</span></td>
-              <td><span class="badge badge-green">Verified Owner</span></td>
-              <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View Records</button></td>
-            </tr>
+          <tbody id="ownersTableBody">
+            <!-- Dynamically populated with Person A through Person Z -->
           </tbody>
         </table>
       </div>
@@ -831,22 +802,29 @@
           <p class="page-subtitle">Track the transfer of property names from seller to buyer.</p>
         </div>
         <div class="header-actions">
-          <button class="btn btn-primary">Apply to Transfer Name</button>
+          <button class="btn btn-primary" onclick="executeRoleAction()">Apply to Transfer Name</button>
         </div>
       </div>
       <div class="mutations-grid">
         <div class="card">
           <div class="card-header"><span class="card-title">Recent Transfer Applications</span></div>
           <table class="data-table">
-            <thead><tr><th>Application ID</th><th>Property ID</th><th>Seller</th><th>Buyer</th><th>Status</th></tr></thead>
+            <thead><tr><th>Application ID</th><th>Floor 3D-ULPIN</th><th>Seller</th><th>Buyer</th><th>Status</th><th>Action</th></tr></thead>
             <tbody>
               <tr>
                 <td class="mono">TRF-2847</td><td class="mono text-cyan">IN-AP-040B-FL02</td>
                 <td>Person Y</td><td>Person X</td><td><span class="badge badge-green">Completed & Approved</span></td>
+                <td><button class="btn-sm btn-outline" onclick="switchPage('ledger')">View</button></td>
               </tr>
               <tr>
-                <td class="mono">TRF-3102</td><td class="mono text-cyan">IN-AP-055A-FL01</td>
-                <td>Person Z</td><td>Person Y</td><td><span class="badge badge-yellow">Officer Verification</span></td>
+                <td class="mono">TRF-3102</td><td class="mono text-cyan">IN-AP-040B-FL01-D</td>
+                <td>Person Z</td><td>Person D</td><td><span class="badge badge-yellow">Pending Review</span></td>
+                <td><button class="btn-sm btn-primary" onclick="approveMutationPrompt('TRF-3102')">Review</button></td>
+              </tr>
+              <tr>
+                <td class="mono">TRF-3145</td><td class="mono text-cyan">IN-AP-040B-FL03-B</td>
+                <td>Person Z</td><td>Person Y</td><td><span class="badge badge-yellow">Pending Review</span></td>
+                <td><button class="btn-sm btn-primary" onclick="approveMutationPrompt('TRF-3145')">Review</button></td>
               </tr>
             </tbody>
           </table>
@@ -855,9 +833,9 @@
           <div class="card-header"><span class="card-title">How Transfer Works</span></div>
           <div class="timeline">
             <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">1. Buyer & Seller submit deed</span><span class="tl-date">Complete</span></div></div>
-            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">2. 3D Map & Boundary Checked</span><span class="tl-date">Zero overlaps found</span></div></div>
-            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">3. Revenue Officer approves</span><span class="tl-date">Signed</span></div></div>
-            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">4. New Property ID issued</span><span class="tl-date">Person X is official owner</span></div></div>
+            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">2. 3D Floor Boundary Checked</span><span class="tl-date">Zero overlaps found</span></div></div>
+            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">3. Revenue Officer / Tahsildar approves</span><span class="tl-date">Signed with Digital Certificate</span></div></div>
+            <div class="tl-item done"><div class="tl-dot"></div><div class="tl-content"><span class="tl-label">4. Floor 3D-ULPIN re-issued</span><span class="tl-date">New owner takes legal title</span></div></div>
           </div>
         </div>
       </div>
@@ -877,7 +855,7 @@
           <div class="upload-zone">
             <p><strong>Drag and drop your village or building map</strong></p>
             <span>Supports PDF, Scanned Image, JPG, PNG</span>
-            <button class="btn btn-primary" style="margin-top:12px">Choose File from Computer</button>
+            <button class="btn btn-primary" style="margin-top:12px" onclick="triggerMapUpload()">Choose File from Computer</button>
           </div>
         </div>
         <div class="card">
@@ -887,7 +865,7 @@
               <div class="queue-thumb">🗺️</div>
               <div class="queue-info">
                 <span class="queue-name">Neighbourhood Map 1987.pdf</span>
-                <span class="queue-status">Converted 48 houses into 3D parcels ✓</span>
+                <span class="queue-status">Converted 48 houses into 3D floor parcels ✓</span>
               </div>
               <span class="queue-badge done">Complete</span>
             </div>
@@ -927,13 +905,28 @@
           <div class="audit-row">
             <span class="audit-time">Today</span>
             <span class="audit-action approve">VERIFIED</span>
-            <span class="audit-desc">Property <code>IN-AP-040B-FL02</code> ownership confirmed for <strong>Person X</strong></span>
+            <span class="audit-desc">Floor <code>IN-AP-040B-FL02</code> ownership confirmed for <strong>Person X</strong></span>
           </div>
           <div class="audit-row">
             <span class="audit-time">Yesterday</span>
-            <span class="audit-action approve">GROUNDED</span>
-            <span class="audit-desc">All foundations confirmed stable on ground level (+47.3m)</span>
+            <span class="audit-action approve">MORTGAGE</span>
+            <span class="audit-desc">Bank loan updated for <strong>Person B</strong> (₹75,00,000 on Commercial Block Z-3)</span>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROLE RESTRICTION MODAL DIALOG -->
+    <div class="role-modal-overlay" id="roleModalOverlay">
+      <div class="role-modal-card">
+        <div class="role-modal-header">
+          <span class="rm-icon" id="rmIcon">🔒</span>
+          <h3 class="rm-title" id="rmTitle">Permission Restricted</h3>
+        </div>
+        <p class="rm-message" id="rmMessage">This action is reserved for authorized officers.</p>
+        <div class="rm-actions">
+          <button class="btn btn-outline" onclick="closeRoleModal()">Close</button>
+          <button class="btn btn-primary" id="rmSwitchBtn" onclick="switchToRequiredRole()">Switch Role</button>
         </div>
       </div>
     </div>
